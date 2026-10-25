@@ -23,6 +23,7 @@ class ModelEntry(BaseModel):
     color: str = "#888888"
     tier: str = "standard"
     enabled: bool = True
+    stream: bool = True  # SSE; Google models via OpenRouter stalled mid-stream
 
 
 class Catalog(BaseModel):

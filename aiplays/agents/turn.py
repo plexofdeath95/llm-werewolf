@@ -9,6 +9,7 @@ from aiplays.agents.base import Delta
 from aiplays.agents.parse import partial_thought
 
 _SSE = RunConfig(streaming_mode=StreamingMode.SSE)
+_WHOLE = RunConfig(streaming_mode=StreamingMode.NONE)
 _MIN_DELTA_GAP = 0.12  # seconds between live updates per player
 
 
@@ -26,13 +27,13 @@ class _Streamer:
 
 
 async def run_turn(runner: Runner, user_id: str, session_id: str, text: str,
-                   on_delta: Delta | None = None) -> tuple[str, str, dict]:
+                   on_delta: Delta | None = None, stream: bool = True) -> tuple[str, str, dict]:
     """Return (final answer text, native reasoning text, usage dict)."""
     msg = types.Content(role="user", parts=[types.Part(text=text)])
     stream = _Streamer(on_delta)
     answer, reasoning, usage = "", "", {}
     async for ev in runner.run_async(user_id=user_id, session_id=session_id,
-                                     new_message=msg, run_config=_SSE):
+                                     new_message=msg, run_config=_SSE if stream else _WHOLE):
         parts = ev.content.parts if ev.content and ev.content.parts else []
         if ev.partial:
             stream.feed(parts)

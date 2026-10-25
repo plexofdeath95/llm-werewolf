@@ -12,7 +12,19 @@ def _who(state: GameState, pid: str | None, me: Player) -> str:
     return f"{p.name} (you)" if p is me else p.name
 
 
-def line(ev: GameEvent, state: GameState, me: Player) -> str | None:
+def _unheard(ev: GameEvent, me: Player, spoken: set[int]) -> str | None:
+    """My react-round draft that lost the floor: the model must know nobody heard it,
+    because its own reply (with the draft) stays in its conversation history."""
+    if ev.actor != me.id or not ev.text.strip() or ev.seq in spoken:
+        return None
+    draft = ev.text if len(ev.text) <= 90 else ev.text[:87] + "..."
+    return f'(Not heard: you wanted to say "{draft}" but someone else had the floor. ' \
+           "Nobody heard it; say it again if it still matters.)"
+
+
+def line(ev: GameEvent, state: GameState, me: Player, spoken: set[int] = frozenset()) -> str | None:
+    if ev.kind == Kind.REACTION:
+        return _unheard(ev, me, spoken)
     if ev.kind in _HIDDEN or not ev.visible(me.id):
         return None
     channel = ev.data.get("channel")
@@ -32,7 +44,10 @@ def line(ev: GameEvent, state: GameState, me: Player) -> str | None:
 
 def build(events: list[GameEvent], state: GameState, me: Player, since: int) -> tuple[str, int]:
     """Return (text of new visible events after seq `since`, newest seq)."""
-    lines = [s for ev in events if ev.seq > since if (s := line(ev, state, me))]
+    fresh = [ev for ev in events if ev.seq > since]
+    spoken = {ev.data["reaction_seq"] for ev in fresh
+              if ev.kind == Kind.SPEECH and ev.data.get("reaction_seq")}
+    lines = [s for ev in fresh if (s := line(ev, state, me, spoken))]
     last = events[-1].seq if events else since
     if not lines:
         return "", last

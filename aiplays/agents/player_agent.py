@@ -16,7 +16,7 @@ from aiplays.settings import ModelEntry
 _RETRY = "Your last reply was not valid ({error}). Reply again with ONLY the JSON object."
 # Hard deadline per call (quick react / deep decision). A stalled provider stream would
 # otherwise hold the whole table; on timeout the caller falls back to a safe default.
-DEADLINE = {False: 90.0, True: 150.0}
+DEADLINE = {False: 60.0, True: 150.0}
 
 
 class PlayerAgent:
@@ -46,7 +46,8 @@ class PlayerAgent:
             for attempt in range(2):
                 try:
                     raw, thoughts, usage = await asyncio.wait_for(
-                        run_turn(self._runner, *self._ids, text, on_delta), DEADLINE[deep])
+                        run_turn(self._runner, *self._ids, text, on_delta, self.entry.stream),
+                        DEADLINE[deep])
                 except TimeoutError:
                     reply.error = f"no answer within {DEADLINE[deep]:.0f}s"
                     break
