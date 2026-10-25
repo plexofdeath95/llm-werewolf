@@ -17,7 +17,7 @@ function Thinking({ text, showText }: { text?: string; showText: boolean }) {
   return (
     <div className="bubble thought thinking">
       <span className="think-emoji">{emoji}</span>
-      {showText && text ? <span className="live-text">{tail(text, 160)}</span> : null}
+      {showText && text ? <span className="live-text">{tail(text, 70)}</span> : null}
       <span className="dots"><i /><i /><i /></span>
     </div>
   )
@@ -35,7 +35,7 @@ export function BubbleCard({ bubble, thinking, liveText, showThoughts }: BubbleC
             {urgencyEmoji(bubble.urgency)}
           </span>
         )}
-        <em>{clip(bubble.text || '…', 170)}</em>
+        <em>{clip(bubble.text || '…', 110)}</em>
       </div>
     )
   }
@@ -48,7 +48,7 @@ export function BubbleCard({ bubble, thinking, liveText, showThoughts }: BubbleC
       {bubble.channel && bubble.channel !== 'public' && (
         <span className="bubble-channel">{bubble.channel}</span>
       )}
-      {clip(bubble.text, 260)}
+      {clip(bubble.text, 180)}
     </div>
   )
 }

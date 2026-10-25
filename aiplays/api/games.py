@@ -49,6 +49,15 @@ async def stats(include_fake: bool = False) -> dict:
     return await report(get_hub().repo, include_fake)
 
 
+@router.post("/{game_id}/stop")
+async def stop(game_id: str) -> dict:
+    session = get_hub().live(game_id)
+    if not session or not session.running:
+        raise HTTPException(404, "no live game with that id")
+    await get_hub().stop(game_id)
+    return {"stopped": game_id}
+
+
 @router.get("/{game_id}")
 async def get_game(game_id: str) -> dict:
     game = await get_hub().repo.get_game(game_id)

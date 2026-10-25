@@ -6,6 +6,7 @@ import { isNight } from '../state/selectors'
 import type { GameView } from '../state/viewTypes'
 import { Arcs } from './Arcs'
 import { CameraRig } from './CameraRig'
+import { createRenderer } from './createRenderer'
 import { Lighting } from './Lighting'
 import { Room } from './Room'
 import { Seat } from './Seat'
@@ -27,7 +28,7 @@ export function GameScene(p: GameSceneProps) {
   const night = isNight(view.phase)
   const speaker = view.speaker ? view.players[view.speaker] : undefined
   return (
-    <Canvas shadows camera={{ position: [0, 7, 9.5], fov: 50 }} dpr={[1, 2]}
+    <Canvas shadows camera={{ position: [0, 9.2, 9.6], fov: 46 }} dpr={[1, 2]} gl={createRenderer}
       onPointerMissed={() => p.onSelect('')}>
       <Lighting night={night} />
       <Room night={night} />

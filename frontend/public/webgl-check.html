@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WebGL Check</title>
+<style>
+  :root { --bg: #120d0a; --text: #f3e7d3; --ok: #7fd37f; --bad: #ff5c5c; --muted: #b39f86; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.5 system-ui, sans-serif; margin: 0; padding: 16px; }
+  table { border-collapse: collapse; margin-top: 12px; max-width: 100%; }
+  td, th { border: 1px solid #3a2c22; padding: 4px 10px; text-align: left; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); } .muted { color: var(--muted); }
+  pre { white-space: pre-wrap; word-break: break-word; }
+</style>
+</head>
+<body>
+<h1>WebGL check</h1>
+<p class="muted">Each row tries a fresh canvas. Copy this whole page back to Claude.</p>
+<table id="out"><tr><th>API</th><th>attributes</th><th>result</th></tr></table>
+<pre id="info"></pre>
+<script>
+const sets = [
+  { antialias: true, alpha: true, powerPreference: 'high-performance' },
+  { antialias: true, alpha: false, powerPreference: 'default' },
+  { antialias: false, alpha: false, powerPreference: 'default' },
+  { antialias: false, alpha: false, depth: true, stencil: false, powerPreference: 'low-power' },
+];
+const out = document.getElementById('out');
+let renderer = '';
+for (const api of ['webgl2', 'webgl']) {
+  for (const attrs of sets) {
+    const c = document.createElement('canvas');
+    let msg = '';
+    c.addEventListener('webglcontextcreationerror', (e) => { msg = e.statusMessage || ''; });
+    let gl = null;
+    try { gl = c.getContext(api, attrs); } catch (e) { msg = String(e); }
+    if (gl && !renderer) {
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      renderer = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+    }
+    const row = out.insertRow();
+    row.insertCell().textContent = api;
+    row.insertCell().textContent = JSON.stringify(attrs);
+    const cell = row.insertCell();
+    cell.textContent = gl ? 'OK' : 'FAILED ' + msg;
+    cell.className = gl ? 'ok' : 'bad';
+  }
+}
+document.getElementById('info').textContent =
+  'GPU: ' + (renderer || 'n/a') + '\nUser agent: ' + navigator.userAgent;
+</script>
+</body>
+</html>

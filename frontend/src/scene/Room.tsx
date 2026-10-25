@@ -1,4 +1,5 @@
-// The tavern: plank floor, round walls, beams, fireplace, barrels and glowing windows.
+// The tavern: plank floor, round walls, fireplace, barrels and glowing windows.
+// (No ceiling beams: the overview camera sits above them and they'd cut across the table.)
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import * as THREE from 'three'
@@ -65,12 +66,6 @@ export function Room({ night }: { night: boolean }) {
         <cylinderGeometry args={[9.2, 9.2, 5, 32, 1, true]} />
         <meshStandardMaterial color={WALL} side={THREE.BackSide} flatShading />
       </mesh>
-      {[0, 1, 2, 3].map((i) => (
-        <mesh key={i} position={[0, 4.6, 0]} rotation={[0, (i * Math.PI) / 4, 0]}>
-          <boxGeometry args={[18, 0.25, 0.3]} />
-          <meshStandardMaterial color="#2c1a0f" />
-        </mesh>
-      ))}
       {[0.6, 2.2, 3.9, 5.4].map((a) => <Window key={a} angle={a} night={night} />)}
       <Fireplace />
       <Barrel position={[6.8, 0.55, -4.5]} />

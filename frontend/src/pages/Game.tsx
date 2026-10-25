@@ -10,7 +10,8 @@ import { GameHud } from '../hud/GameHud'
 import { loadPref, savePref } from '../music/util'
 import { GameScene } from '../scene/GameScene'
 
-const DEFAULT_TOGGLES: ViewToggles = { god: true, follow: true, orbit: false, stats: true }
+const DEFAULT_TOGGLES: ViewToggles = { god: true, follow: false, orbit: false, stats: true }
+const TOGGLES_KEY = 'view.toggles.v2' // bumped: old saves had the swooping camera on
 const NO_LIVE = {}
 const LIVE_EDGE = 6 // events; closer than this to the newest event = "watching live"
 
@@ -32,10 +33,10 @@ export function GamePage() {
     return s
   }, [pending, live, view.players])
 
-  const [toggles, setToggles] = useState<ViewToggles>(() => loadPref('view.toggles', DEFAULT_TOGGLES))
+  const [toggles, setToggles] = useState<ViewToggles>(() => loadPref(TOGGLES_KEY, DEFAULT_TOGGLES))
   const setToggle = (k: keyof ViewToggles) => setToggles((t) => {
     const next = { ...t, [k]: !t[k] }
-    savePref('view.toggles', next)
+    savePref(TOGGLES_KEY, next)
     return next
   })
   const [selected, setSelected] = useState<string>('')

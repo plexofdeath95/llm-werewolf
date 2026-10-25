@@ -36,7 +36,7 @@ export function Seat({ view, player, god, thinking, live, selected, onSelect }: 
         urgency={god ? reaction?.urgency : undefined}
         onSelect={() => onSelect(player.id)}
       >
-        <Html position={[0, 2.35, 0]} center distanceFactor={9} zIndexRange={[20, 0]}>
+        <Html position={[0, 2.35, 0]} center zIndexRange={[20, 0]}>
           <div className="bubble-anchor">
             <BubbleCard
               bubble={visibleBubble(view.bubbles[player.id], god)}
@@ -46,9 +46,11 @@ export function Seat({ view, player, god, thinking, live, selected, onSelect }: 
             />
           </div>
         </Html>
-        <Html position={[0, -0.05, 0.55]} center distanceFactor={9} zIndexRange={[10, 0]}>
+        <Html position={[0, -0.05, 0.55]} center zIndexRange={[10, 0]}>
+          {/* stopPropagation: otherwise the click bubbles to the canvas, which sees no 3D hit
+              and fires onPointerMissed, deselecting the player we just selected. */}
           <div className={`nametag${player.alive ? '' : ' dead'}`} style={{ borderColor: color }}
-            onClick={() => onSelect(player.id)}>
+            onClick={(e) => { e.stopPropagation(); onSelect(player.id) }}>
             <div className="nametag-name">
               {role ? <span title={roleLabel(view, role)}>{roleEmoji(view, role)} </span> : null}
               {player.name}

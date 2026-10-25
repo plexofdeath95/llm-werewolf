@@ -34,10 +34,10 @@ export function GameHud(p: GameHudProps) {
     <div className="hud">
       <div className="hud-top">
         <PhaseBanner view={view} />
-        <div className="hud-top-right">
-          <CostMeter spent={Math.max(view.spent, p.server?.spent ?? 0)} max={p.server?.max_usd} />
-          <MusicControls />
-        </div>
+      </div>
+      <div className="hud-top-right">
+        <CostMeter spent={Math.max(view.spent, p.server?.spent ?? 0)} max={p.server?.max_usd} />
+        <MusicControls />
       </div>
       {view.paused && p.liveGame && <div className="paused-flag">⏸ Game paused on the server</div>}
       <div className="hud-left">
