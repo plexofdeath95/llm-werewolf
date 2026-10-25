@@ -57,7 +57,8 @@ class PlayerAgent:
                 except TimeoutError:
                     reply.error = f"no answer within {DEADLINE[deep]:.0f}s"
                     break
-                except Exception as e:  # dropped stream, 5xx, rate limit: one more try
+                # any provider failure (dropped stream, 5xx, rate limit) gets one more try
+                except Exception as e:  # noqa: BLE001
                     reply.error = f"{type(e).__name__}: {str(e)[:300]}"
                     text = _REDO
                     await asyncio.sleep(RETRY_PAUSE)
