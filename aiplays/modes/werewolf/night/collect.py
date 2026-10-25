@@ -5,6 +5,7 @@ from aiplays.core.moderator import Moderator
 from aiplays.core.state import Player
 from aiplays.modes.werewolf.night import options
 from aiplays.modes.werewolf.night.context import Act, Night
+from aiplays.modes.werewolf.roles.base import PRIORITY
 
 
 async def collect(mod: Moderator, n: Night) -> None:
@@ -35,7 +36,14 @@ async def collect(mod: Moderator, n: Night) -> None:
                            target=act.targets[0].id if act.targets else None, visible_to=[p.id],
                            data={"action": act.action.name, "cls": act.action.cls,
                                  "targets": [t.id for t in act.targets], "option": act.option,
+                                 "movement": act.action.movement, "order": _order(act),
                                  "thought": replies[p.id].thought, "channel": "night"})
+
+
+def _order(act: Act) -> int:
+    """Resolution order for the UI's night replay: early moves first, then PRIORITY."""
+    cls = act.action.cls
+    return -1 if cls == "early" else PRIORITY.index(cls) if cls in PRIORITY else len(PRIORITY)
 
 
 def _validate(mod: Moderator, n: Night, p: Player, r: Action) -> Act | None:
