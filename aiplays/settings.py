@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     adk_db_url: str = _sqlite("adk_sessions.db")
     max_concurrency: int = 12
     catalog_file: Path = ROOT / "config" / "models.yaml"
+    music_dir: Path | None = None  # licensed background music, served read-only
 
 
 @lru_cache

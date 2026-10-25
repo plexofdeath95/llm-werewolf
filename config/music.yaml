@@ -1,0 +1,20 @@
+# Background music moods -> tracks ("Category/Track_Name", .mp3 implied) under MUSIC_DIR.
+# The UI crossfades between moods as the game phase changes.
+moods:
+  lobby: [Fantasy/Dingy_Tavern, Fantasy/Tavern_Music, Fantasy/Ye_Olde_Tavern, Fantasy/Snowed_Inn,
+          Fantasy/Home_And_Hearth, Fantasy/Quiet_Hearth, Fantasy/Campfire_Memories, Fantasy/Forest_Town]
+  day: [Steampunk/City_Intrigue, Steampunk/Dance_Of_Deceit, Fantasy/Thieves_Guild,
+        Fantasy/Riddles_In_The_Tea_Garden, Fantasy/Merchant_Of_Shadows, Fantasy/Fortune_Teller,
+        Fantasy/Moonlit_Trickster, Fantasy/Stealth_Check, Fantasy/Whimsy_And_Warnings, Fantasy/Secrets_Of_The_Weave]
+  night: [Horror/Whispers_In_The_Dark, Horror/The_Abandoned_Manor, Horror/Corrupted_Forest, Horror/Hag_Coven,
+          Horror/BansheeS_Call, Horror/Dreadmire, Horror/Dark_Spaces, Fantasy/Under_The_Moonlight_Glow,
+          Fantasy/The_Grey_Hunt, Fantasy/EvilS_Approach, Fantasy/Dark_Ritual, Fantasy/You_ShouldnT_Be_Here]
+  vote: [Steampunk/The_Countdown, Fantasy/Eldritch_Prophecy, Fantasy/Echoes_From_The_Abyss, Fantasy/Omen,
+         Fantasy/Spells_And_Shadows, Fantasy/Temple_Of_Bones]
+  dawn: [Fantasy/Lament_Of_The_Ancestors, Fantasy/At_Sorrow_Edge, Fantasy/Solace, Fantasy/Tears_Of_Light,
+         Fantasy/DawnS_Light, Fantasy/Hope_And_Memory]
+  village_wins: [Fantasy/The_Heroes_Return, Fantasy/Dragons_Defeated, Fantasy/Rise_Of_The_Realm,
+                 Fantasy/Tales_Of_Grandeur, Fantasy/Valhalla_Awaits]
+  wolves_wins: [Fantasy/Demon_Lord, Fantasy/Tears_Of_Asmodeus, Fantasy/The_God_King, Fantasy/The_Fallen_Keep,
+                Fantasy/The_Big_Bad_Evil_Guy]
+  neutral_wins: [Fantasy/Moonlit_Trickster, Steampunk/Dance_Of_Deceit, Fantasy/Fortune_Teller]

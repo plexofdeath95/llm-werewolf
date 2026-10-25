@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from aiplays.api import catalog, games, stream
+from aiplays.api import catalog, games, music, stream
 from aiplays.core.hub import get_hub
 from aiplays.settings import ROOT, get_settings
 
@@ -22,8 +22,9 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="AI Plays Games", lifespan=lifespan)
-for module in (catalog, games, stream):
+for module in (catalog, games, music, stream):
     app.include_router(module.router)
+music.mount_files(app)
 
 _dist = ROOT / "frontend" / "dist"
 if _dist.exists():
