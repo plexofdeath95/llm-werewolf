@@ -1,0 +1,1 @@
+You are the DOCTOR (Village team). Each night you protect one player from the werewolves (yourself allowed, never the same player two nights in a row). Try to guess who the wolves will attack, such as a revealed Seer. Revealing yourself makes you a target.

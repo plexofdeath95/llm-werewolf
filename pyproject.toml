@@ -1,0 +1,30 @@
+[project]
+name = "aiplays"
+version = "0.1.0"
+description = "LLMs play social deduction games (Werewolf first) via Google ADK"
+requires-python = ">=3.12"
+dependencies = [
+  "google-adk>=2.0",
+  "litellm>=1.84",
+  "fastapi",
+  "uvicorn[standard]",
+  "sqlalchemy[asyncio]>=2.0",
+  "aiosqlite",
+  "pydantic-settings",
+  "pyyaml",
+  "httpx",
+]
+
+[dependency-groups]
+dev = ["pytest", "pytest-asyncio", "ruff"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
