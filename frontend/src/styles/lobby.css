@@ -1,0 +1,50 @@
+/* Lobby + history pages. */
+.page { max-width: 1200px; margin: 0 auto; padding: 18px 16px 80px; }
+.hero { text-align: center; margin: 12px 0 18px; }
+.hero h1 { font-size: 40px; color: var(--gold); text-shadow: 0 2px 20px rgba(232, 176, 74, 0.35); }
+.hero p { color: var(--muted); }
+.card {
+  background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 14px;
+}
+.card h3 { font-size: 16px; color: var(--gold); }
+.card-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.lobby-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; }
+@media (max-width: 900px) { .lobby-grid { grid-template-columns: 1fr; } }
+.inline { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+.inline input { width: 64px; }
+
+.seat-row { display: flex; align-items: center; gap: 8px; margin: 6px 0; flex-wrap: wrap; }
+.seat-no { width: 20px; text-align: right; color: var(--muted); }
+.swatch { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+.seat-row select { max-width: 210px; }
+.persona-input { flex: 1; min-width: 160px; }
+
+.role-chip {
+  border-width: 1px; border-style: solid; border-radius: 999px; padding: 3px 10px; margin: 3px;
+  background: rgba(255, 255, 255, 0.04); font-size: 13px;
+}
+.deck-in-play { min-height: 36px; padding: 4px; border-radius: 8px; background: rgba(0, 0, 0, 0.2); }
+.deck-team summary { cursor: pointer; margin: 8px 0 4px; font-weight: 800; text-transform: capitalize; }
+.deck-options { display: flex; flex-wrap: wrap; }
+
+.settings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; margin: 10px 0; }
+.settings-grid label { display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 12px; }
+.settings-toggles { display: flex; flex-direction: column; gap: 6px; }
+.toggle { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+
+.start-bar {
+  position: sticky; bottom: 12px; display: flex; gap: 14px; align-items: center; justify-content: center;
+  padding: 10px; background: rgba(18, 13, 10, 0.9); border: 1px solid var(--border); border-radius: 999px;
+}
+.start-btn {
+  font-family: var(--font-title); font-size: 18px; font-weight: 800; padding: 10px 28px; border-radius: 999px;
+  background: linear-gradient(135deg, #d9862b, #a8421c); border: none; box-shadow: 0 0 24px rgba(255, 138, 58, 0.45);
+}
+
+.history-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.history-table th, .history-table td { padding: 8px; border-bottom: 1px solid var(--border); text-align: left; }
+.history-table th { color: var(--muted); font-weight: 600; }
+.models-cell { white-space: nowrap; }
+.mini-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 3px; }
+.open-link { text-decoration: none; font-weight: 800; }

@@ -1,1 +1,0 @@
-You are the SEER (Village team). Each night you learn whether one player is a werewolf. Your information is the village's best weapon, but revealing yourself makes you the werewolves' next target. Decide carefully when and how to share what you know.

@@ -1,0 +1,50 @@
+/* Bubbles and name tags floating above/below avatars (drei Html). */
+.bubble-anchor { display: flex; justify-content: center; transform: translateY(-50%); pointer-events: none; }
+.bubble {
+  position: relative; max-width: 240px; min-width: 60px; padding: 8px 12px; border-radius: 16px;
+  font-size: 13px; line-height: 1.3; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  animation: bubble-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+@keyframes bubble-in { from { transform: scale(0.4) translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+.bubble.speech { background: #fffdf7; color: #24170e; font-weight: 600; }
+.bubble.speech::after {
+  content: ""; position: absolute; bottom: -9px; left: 50%; transform: translateX(-50%);
+  border: 9px solid transparent; border-top-color: #fffdf7; border-bottom: 0;
+}
+.bubble.speech.private { background: #ffe1e1; }
+.bubble.speech.private::after { border-top-color: #ffe1e1; }
+.bubble.thought {
+  background: rgba(220, 230, 255, 0.92); color: #1b2140; border-radius: 22px; font-style: italic;
+  border: 2px dashed rgba(90, 110, 200, 0.35);
+}
+.bubble.thought::before, .bubble.thought::after {
+  content: ""; position: absolute; background: rgba(220, 230, 255, 0.92); border-radius: 50%;
+}
+.bubble.thought::before { width: 12px; height: 12px; bottom: -14px; left: 46%; }
+.bubble.thought::after { width: 7px; height: 7px; bottom: -24px; left: 50%; }
+.bubble.vote { background: #2f2010; color: var(--gold); border: 1px solid var(--gold); font-weight: 800; white-space: nowrap; }
+.bubble.thinking { display: flex; align-items: center; gap: 6px; max-width: 260px; }
+.think-emoji { font-size: 22px; font-style: normal; animation: wiggle 0.9s ease-in-out infinite; }
+@keyframes wiggle { 50% { transform: rotate(-12deg) scale(1.12); } }
+.live-text { font-size: 11.5px; opacity: 0.85; max-height: 64px; overflow: hidden; }
+.dots { display: inline-flex; gap: 3px; }
+.dots i { width: 5px; height: 5px; border-radius: 50%; background: #5a6ec8; animation: dot 1.2s infinite; }
+.dots i:nth-child(2) { animation-delay: 0.2s; }
+.dots i:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dot { 0%, 80%, 100% { transform: translateY(0); opacity: 0.4; } 40% { transform: translateY(-5px); opacity: 1; } }
+.urgency-emoji { font-style: normal; font-size: 18px; margin-right: 4px; display: inline-block; animation: pop 0.4s; }
+.bubble-channel { display: block; font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: #a23; }
+.interrupt-burst {
+  position: absolute; top: -22px; left: 50%; transform: translateX(-50%) rotate(-6deg);
+  background: #ff3b3b; color: #fff; font-weight: 900; font-size: 12px; padding: 2px 8px; border-radius: 6px;
+  animation: burst 0.6s cubic-bezier(0.2, 1.8, 0.4, 1); white-space: nowrap; font-style: normal;
+}
+@keyframes burst { from { transform: translateX(-50%) scale(0) rotate(-30deg); } to { transform: translateX(-50%) rotate(-6deg); } }
+
+.nametag {
+  background: rgba(18, 12, 8, 0.82); border: 1px solid; border-radius: 10px; padding: 3px 9px;
+  text-align: center; white-space: nowrap; cursor: pointer; user-select: none;
+}
+.nametag.dead { opacity: 0.6; filter: grayscale(0.6); }
+.nametag-name { font-weight: 800; font-size: 13px; color: var(--text); }
+.nametag-model { font-size: 10.5px; font-weight: 700; }

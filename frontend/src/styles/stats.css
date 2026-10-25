@@ -1,0 +1,32 @@
+/* Game stats panel. */
+.stats { padding: 6px 10px; max-height: 48%; display: flex; flex-direction: column; min-height: 0; }
+.stats.collapsed { max-height: none; }
+.stats-head { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.stats-head .tab { padding: 2px 8px; font-size: 12px; background: transparent; }
+.stats-head .tab.on { background: rgba(232, 176, 74, 0.22); border-color: var(--gold); }
+.stats-mini { font-size: 12px; color: var(--muted); }
+.stats-body { overflow-y: auto; margin-top: 6px; font-size: 12.5px; }
+.stat-row { margin: 3px 0; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.stat-label { color: var(--muted); font-size: 11px; text-transform: uppercase; margin: 8px 0 4px; }
+.stat-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+.stat-table td, .stat-table th { padding: 3px 4px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); text-align: left; }
+.stat-table tr.dead { opacity: 0.55; }
+.stat-table.counters td:not(:first-child), .stat-table.counters th:not(:first-child) { text-align: right; }
+.pname { background: none; border: none; padding: 0 3px 0 0; font-weight: 800; }
+.pname:hover { text-decoration: underline; transform: none; background: none; }
+.timeline { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.tl-chip { font-size: 11px; padding: 2px 7px; border-radius: 999px; background: rgba(232, 176, 74, 0.14); }
+.tl-chip.night { background: rgba(111, 141, 255, 0.18); }
+.tl-chip.now { outline: 1px solid var(--gold); }
+.turn-order { display: flex; flex-wrap: wrap; gap: 4px; }
+.turn-chip { font-size: 11px; border-left: 3px solid; padding: 1px 6px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; }
+.tally-row { display: grid; grid-template-columns: 90px 1fr 22px; gap: 6px; align-items: center; margin: 4px 0; }
+.tally-voters { grid-column: 1 / -1; font-size: 11px; }
+.tally-bar { height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: 4px; overflow: hidden; }
+.tally-bar > div { height: 100%; background: linear-gradient(90deg, var(--gold), var(--accent)); transition: width 0.4s; }
+.tally-n { font-weight: 800; text-align: right; }
+.vote-result { margin-top: 8px; padding: 6px 8px; border: 1px solid var(--gold); border-radius: 8px; }
+.night-log { padding-left: 18px; margin: 4px 0; }
+.night-log li { margin: 4px 0; }
+.night-log li.result { opacity: 0.85; }
+.cls-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }

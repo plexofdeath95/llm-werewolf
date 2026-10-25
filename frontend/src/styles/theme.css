@@ -1,0 +1,78 @@
+/* Theme tokens + base elements (dark tavern palette). */
+:root {
+  --bg: #120d0a;
+  --bg-2: #1c1410;
+  --panel: rgba(22, 15, 11, 0.78);
+  --panel-solid: #1f1712;
+  --border: rgba(255, 214, 150, 0.16);
+  --text: #f3e7d3;
+  --muted: #b39f86;
+  --gold: #e8b04a;
+  --accent: #ff8a3a;
+  --danger: #ff5c5c;
+  --ok: #7fd37f;
+  --night: #6f8dff;
+  --tint-wolf: rgba(160, 30, 40, 0.28);
+  --tint-love: rgba(220, 80, 150, 0.22);
+  --tint-private: rgba(110, 90, 200, 0.22);
+  --tint-last: rgba(120, 120, 120, 0.25);
+  --radius: 12px;
+  --font-title: 'Cinzel', Georgia, serif;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; height: 100%; }
+body {
+  background: radial-gradient(ellipse at top, #2a1b12 0%, var(--bg) 60%);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+h1, h2, h3 { font-family: var(--font-title); letter-spacing: 0.02em; margin: 0; }
+a { color: var(--gold); }
+
+button, select, input {
+  font: inherit;
+  color: var(--text);
+  background: #2a1f18;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+button { cursor: pointer; transition: transform 0.1s, background 0.15s; }
+button:hover:not(:disabled) { background: #3a2a1f; transform: translateY(-1px); }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+input[type='range'] { padding: 0; accent-color: var(--gold); background: transparent; border: none; }
+input[type='checkbox'] { accent-color: var(--gold); }
+
+.icon-btn { background: transparent; border: none; padding: 2px 6px; }
+.muted { color: var(--muted); }
+.small { font-size: 11px; }
+.warn { color: var(--gold); }
+.error-box {
+  background: rgba(255, 92, 92, 0.12); border: 1px solid var(--danger);
+  border-radius: var(--radius); padding: 10px 14px; margin: 10px 0;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.topnav {
+  display: flex; align-items: center; gap: 16px;
+  padding: 10px 20px; border-bottom: 1px solid var(--border);
+  background: rgba(18, 13, 10, 0.85); position: sticky; top: 0; z-index: 5;
+}
+.topnav .brand { font-family: var(--font-title); font-weight: 800; color: var(--gold); }
+.topnav a { text-decoration: none; color: var(--muted); }
+.topnav a.active { color: var(--text); border-bottom: 2px solid var(--gold); }
+.topnav .spacer { flex: 1; }
+
+.music-controls { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.music-controls input { width: 80px; }
+.now-playing { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
