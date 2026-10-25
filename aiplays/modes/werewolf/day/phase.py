@@ -21,9 +21,10 @@ async def day(mod: Moderator) -> None:
     st = mod.state
     alive = st.alive()
     await mod.set_phase("discussion", f"Day {st.round}: discussion")
-    await mod.announce(f"Discuss: who should be eliminated? Still alive: {st.names(alive)}.")
-    lo, hi = scheduler.limits(len(alive), mod.config.talk)
-    await Discussion(mod, alive, min_msgs=lo, max_msgs=hi).run()
+    limit = scheduler.limit(len(alive), mod.config.talk)
+    await mod.announce(f"Discuss: who should be eliminated? Still alive: {st.names(alive)}. "
+                       f"You have up to {limit} messages before the vote; everyone will be heard.")
+    await Discussion(mod, alive, max_msgs=limit).run()
 
     await mod.set_phase("vote", f"Day {st.round}: vote")
     await asyncio.gather(*(h(mod, p) for p in alive if (h := _hook(mod, p, "day_action"))))

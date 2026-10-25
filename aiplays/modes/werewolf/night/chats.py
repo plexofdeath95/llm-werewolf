@@ -24,5 +24,4 @@ async def night_chats(mod: Moderator) -> None:
         await mod.announce(f"[{ch}] {mod.state.names(members)}: you may talk privately now.",
                            visible_to=ids, channel=ch)
         n = len(members)
-        await Discussion(mod, members, channel=ch, visible_to=ids,
-                         min_msgs=n, max_msgs=2 * n + 1).run()
+        await Discussion(mod, members, channel=ch, visible_to=ids, max_msgs=2 * n + 1).run()

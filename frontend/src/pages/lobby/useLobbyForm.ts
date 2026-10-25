@@ -9,13 +9,14 @@ export interface LobbySettings {
   quick: number
   deep: number
   maxCost: number
+  rounds: number
   fake: boolean
   revealModels: boolean
   revealOnDeath: boolean
 }
 
 const DEFAULTS: LobbySettings = {
-  seed: '', narrator: '', quick: 512, deep: 2048, maxCost: 10,
+  seed: '', narrator: '', quick: 512, deep: 2048, maxCost: 10, rounds: 3,
   fake: false, revealModels: false, revealOnDeath: true,
 }
 
@@ -66,6 +67,7 @@ export function useLobbyForm() {
     reveal_models: settings.revealModels,
     fake: settings.fake,
     fake_delay: 0.8,
+    talk: { rounds: settings.rounds },
   })
 
   const modeInfo = modes.find((m) => m.id === mode)

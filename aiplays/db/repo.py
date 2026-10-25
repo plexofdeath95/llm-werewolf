@@ -20,8 +20,11 @@ class Repo:
         self.session = async_sessionmaker(self.engine, expire_on_commit=False)
 
     async def init(self) -> None:
-        """Apply Alembic migrations (schema changes live in migrations/versions)."""
+        """Apply Alembic migrations, then close out games orphaned by a restart."""
         await migrate.upgrade(self.url)
+        async with self.session.begin() as s:  # live games never survive a process restart
+            await s.execute(update(GameRow).where(GameRow.status == "running")
+                            .values(status="cancelled", ended_at=time.time()))
 
     async def create_game(self, st: GameState, cfg: GameConfig) -> None:
         cat = get_catalog()

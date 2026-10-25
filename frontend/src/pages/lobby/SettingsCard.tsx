@@ -4,10 +4,11 @@ import type { LobbyForm, LobbySettings } from './useLobbyForm'
 export function SettingsCard({ form }: { form: LobbyForm }) {
   const { settings: s, setSettings, catalog } = form
   const set = <K extends keyof LobbySettings>(k: K, v: LobbySettings[K]) => setSettings({ ...s, [k]: v })
-  const num = (k: 'quick' | 'deep' | 'maxCost', label: string, step: number) => (
-    <label>
+  const num = (k: 'quick' | 'deep' | 'maxCost' | 'rounds', label: string, step: number, tip: string) => (
+    <label title={tip}>
       {label}
-      <input type="number" step={step} min={0} value={s[k]} onChange={(e) => set(k, Number(e.target.value))} />
+      <input type="number" step={step} min={k === 'rounds' ? 1 : 0} value={s[k]}
+        onChange={(e) => set(k, Number(e.target.value))} />
     </label>
   )
   return (
@@ -25,9 +26,11 @@ export function SettingsCard({ form }: { form: LobbyForm }) {
             {catalog?.models.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
           </select>
         </label>
-        {num('quick', 'react reasoning cap', 128)}
-        {num('deep', 'decision reasoning cap', 256)}
-        {num('maxCost', 'max cost (USD)', 1)}
+        {num('rounds', 'discussion rounds', 1, 'Time limit: each day ends after this many rounds '
+          + '(one round = one message per living player). Everyone is heard at least once.')}
+        {num('quick', 'react reasoning cap', 128, 'Max reasoning tokens for quick react calls')}
+        {num('deep', 'decision reasoning cap', 256, 'Max reasoning tokens for votes and night actions')}
+        {num('maxCost', 'max cost (USD)', 1, 'The game pauses when it has spent this much')}
       </div>
       <div className="settings-toggles">
         <label className="toggle">

@@ -15,6 +15,7 @@ export interface GameConfig {
   reveal_models: boolean
   fake: boolean
   fake_delay: number
+  talk?: { rounds: number }
 }
 
 export interface GameRow {

@@ -3,17 +3,17 @@ from pydantic import BaseModel, Field
 
 
 class TalkConfig(BaseModel):
-    """Weights for the parallel-react scheduler (see core/scheduler.py)."""
+    """Discussion length and the parallel-react scheduler's weights (core/scheduler.py)."""
+    rounds: int = 3               # time limit: up to rounds x alive messages, then the vote
+    max_messages: int = 30        # hard cap regardless of table size
     pass_threshold: int = 3
     named_bonus: float = 3.0
-    quiet_bonus: float = 1.5
+    unheard_bonus: float = 4.0    # hasn't spoken yet this discussion: strongly preferred
+    repeat_penalty: float = 0.75  # per message already said this discussion
     last_penalty: float = 3.0
     second_last_penalty: float = 1.5
     jitter: float = 0.5
     interrupt_urgency: int = 8
-    per_alive: int = 4
-    max_messages: int = 30
-    min_per_alive: float = 1.0
 
 
 class SeatConfig(BaseModel):
