@@ -11,6 +11,8 @@ class Bid:
     urgency: int
     message: str
     seq: int = 0  # REACTION event seq, linked from the resulting SPEECH
+    claim: str = ""    # role id publicly claimed in this message ("" = none)
+    suspect: str = ""  # player the bidder privately suspects most ("" = none)
 
 
 def is_pass(bid: Bid, cfg: TalkConfig) -> bool:

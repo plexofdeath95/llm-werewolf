@@ -24,6 +24,7 @@ class ModelEntry(BaseModel):
     tier: str = "standard"
     enabled: bool = True
     stream: bool = True  # SSE; Google models via OpenRouter stalled mid-stream
+    reasoning_off: str = "minimal"  # how to turn reasoning off: minimal | disable
 
 
 class Catalog(BaseModel):

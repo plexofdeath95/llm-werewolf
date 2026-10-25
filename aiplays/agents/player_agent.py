@@ -7,16 +7,19 @@ from google.adk.runners import Runner
 from google.adk.sessions import BaseSessionService
 
 from aiplays.agents.base import Delta, Reply, T
-from aiplays.agents.models import build_model
+from aiplays.agents.models import build_model, max_output
 from aiplays.agents.parse import parse_reply, schema_hint
 from aiplays.agents.pricing import cost
 from aiplays.agents.turn import run_turn
 from aiplays.settings import ModelEntry
 
 _RETRY = "Your last reply was not valid ({error}). Reply again with ONLY the JSON object."
+_REDO = "(The connection dropped before your answer arrived. Please answer my last message.)"
 # Hard deadline per call (quick react / deep decision). A stalled provider stream would
 # otherwise hold the whole table; on timeout the caller falls back to a safe default.
 DEADLINE = {False: 60.0, True: 150.0}
+ATTEMPTS = 3
+RETRY_PAUSE = 1.5  # seconds before re-asking after a dropped connection
 
 
 class PlayerAgent:
@@ -25,9 +28,12 @@ class PlayerAgent:
                  quick: int | None, deep: int | None,
                  sem: asyncio.Semaphore, session_service: BaseSessionService):
         self.entry = entry
-        # Two model configs differing only in reasoning cap; swapped per call (one call
-        # per player is ever in flight, so swapping on the shared agent is safe).
-        self._models = {False: build_model(entry, quick), True: build_model(entry, deep)}
+        # Model configs differing only in reasoning; swapped per call (one call per player is
+        # ever in flight, so swapping on the shared agent is safe). "off" rescues a reply that
+        # spent its whole budget reasoning and never wrote the answer.
+        caps = {False: quick, True: deep, "off": 0 if quick is not None else None}
+        self._models = {k: build_model(entry, v) for k, v in caps.items()}
+        self._limit = {k: max_output(entry, v) for k, v in caps.items()}
         self._agent = LlmAgent(name=agent_name, model=self._models[False],
                                static_instruction=instruction)
         self._runner = Runner(app_name=app_name, agent=self._agent,
@@ -38,12 +44,12 @@ class PlayerAgent:
     async def ask(self, prompt: str, schema: type[T], *, deep: bool = False,
                   choices: list[str] | None = None,
                   on_delta: Delta | None = None) -> Reply[T]:
-        self._agent.model = self._models[deep]
-        started = time.monotonic()
+        started, key = time.monotonic(), deep
         text = f"{prompt}\n\n{schema_hint(schema)}"
         reply: Reply[T] = Reply(value=None)
         async with self._sem:
-            for attempt in range(2):
+            for attempt in range(ATTEMPTS):
+                self._agent.model = self._models[key]
                 try:
                     raw, thoughts, usage = await asyncio.wait_for(
                         run_turn(self._runner, *self._ids, text, on_delta, self.entry.stream),
@@ -51,9 +57,11 @@ class PlayerAgent:
                 except TimeoutError:
                     reply.error = f"no answer within {DEADLINE[deep]:.0f}s"
                     break
-                except Exception as e:  # provider/network failure after LiteLLM retries
-                    reply.error = f"{type(e).__name__}: {e}"
-                    break
+                except Exception as e:  # dropped stream, 5xx, rate limit: one more try
+                    reply.error = f"{type(e).__name__}: {str(e)[:300]}"
+                    text = _REDO
+                    await asyncio.sleep(RETRY_PAUSE)
+                    continue
                 reply.raw, reply.thoughts = raw, reply.thoughts + thoughts
                 reply.cost += cost(self.entry.slug, usage)
                 reply.usage = usage
@@ -63,5 +71,13 @@ class PlayerAgent:
                 except ValueError as e:
                     reply.error = str(e)
                     text = _RETRY.format(error=e)
+                    if self._overthought(usage, key):
+                        key = "off"
         reply.latency = time.monotonic() - started
         return reply
+
+    def _overthought(self, usage: dict, key) -> bool:
+        """The reply used (almost) its whole token budget: reasoning crowded out the answer."""
+        out = usage.get("candidates_token_count") or 0
+        return key != "off" and self._models.get("off") is not None and \
+            out >= self._limit[key] - 16

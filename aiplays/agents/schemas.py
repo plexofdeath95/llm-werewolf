@@ -14,8 +14,13 @@ class Reaction(BaseModel):
                                         "8-10 = must respond now (accused, asked, or key info).")
     addressing: list[str] = Field(default_factory=list,
                                   description="Names of the players you are speaking to, if any.")
-    message: str = Field("", description="What you say aloud if you get the floor: 1-3 natural "
-                                         "sentences. Empty string to stay silent.")
+    message: str = Field("", description="What you say aloud if you get the floor: ONE or two "
+                                         "short natural sentences, at most 25 words. Empty "
+                                         "string to stay silent.")
+    suspect: str = Field("", description="Name of the player you currently suspect most "
+                                         "(private), or empty if nobody.")
+    claim: str = Field("", description="If your message publicly claims a role (true or a "
+                                       "bluff), that role's name; otherwise empty.")
 
     @field_validator("urgency", mode="before")
     @classmethod
@@ -39,7 +44,8 @@ class Reaction(BaseModel):
 class Speech(BaseModel):
     """Something said when called on directly (nudges, last words, narration)."""
     thought: str = Field("", description=THOUGHT)
-    message: str = Field("", description="What you say aloud: 1-3 natural sentences.")
+    message: str = Field("", description="What you say aloud: one or two short natural "
+                                         "sentences, at most 25 words.")
 
 
 class Action(BaseModel):

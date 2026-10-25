@@ -3,10 +3,11 @@
 Every participant is heard at least once (unheard voices are favoured, and the last slots
 of the time limit are reserved for anyone still silent), then the discussion ends.
 """
-from aiplays.agents.schemas import Reaction, Speech
+from aiplays.agents.schemas import Speech
 from aiplays.core import scheduler
 from aiplays.core.events import Kind
 from aiplays.core.moderator import Moderator
+from aiplays.core.react import Reactions
 from aiplays.core.scheduler import Bid
 from aiplays.core.state import Player
 
@@ -19,8 +20,15 @@ class Discussion:
         self.recent: list[str] = []
         self.spoken: dict[str, int] = {}
         self.named: set[str] = set()
+        self.reactions = Reactions(mod, channel)
 
     async def run(self) -> int:
+        try:
+            return await self._loop()
+        finally:
+            await self.reactions.close()
+
+    async def _loop(self) -> int:
         silence, warned = 0, False
         while len(self.recent) < self.max:
             unheard, left = self._unheard(), self.max - len(self.recent)
@@ -30,7 +38,10 @@ class Discussion:
             if not warned and left == len(self._alive()) and self.max > left:
                 warned = True
                 await self._say_mod("Last round before the vote: make your final points.")
-            best = scheduler.pick(await self._react_round(), self.recent, self.named,
+            question = self.mod.prompt("react", channel=self.channel,
+                                       count=len(self.recent) + 1, max=self.max)
+            bids = await self.reactions.round(self._alive(), question)
+            best = scheduler.pick(bids, self.recent, self.named,
                                   self.spoken, self.mod.config.talk, self.mod.rng)
             if best:
                 silence = 0
@@ -53,27 +64,15 @@ class Discussion:
     async def _say_mod(self, text: str) -> None:
         await self.mod.announce(text, visible_to=self.visible_to, channel=self.channel)
 
-    async def _react_round(self) -> list[Bid]:
-        bids: list[Bid] = []
-
-        async def on_reply(p: Player, r: Reaction) -> None:
-            ev = await self.mod.emit(Kind.REACTION, r.message, actor=p.id, visible_to=[p.id],
-                                     data={**r.model_dump(), "channel": self.channel})
-            bids.append(Bid(p.id, r.urgency, r.message, ev.seq))
-
-        question = self.mod.prompt("react", channel=self.channel, count=len(self.recent) + 1,
-                                   max=self.max)
-        await self.mod.ask_many(self._alive(), lambda p: question, Reaction, on_reply=on_reply,
-                                fallback=lambda p: Reaction())
-        return bids
-
     async def _say(self, bid: Bid, score: float) -> None:
         interrupt = scheduler.is_interrupt(bid, self.named, self.mod.config.talk)
         await self._speech(bid.pid, bid.message, interrupt=interrupt, urgency=bid.urgency,
-                           score=score, reaction_seq=bid.seq)
+                           score=score, reaction_seq=bid.seq, claim=bid.claim,
+                           suspect=bid.suspect)
 
     async def _nudge(self, candidates: list[Player]) -> None:
         quiet = self.mod.rng.choice(candidates)
+        await self.reactions.settle(quiet.id)  # never two calls in flight for one player
         await self._say_mod(f"{quiet.name}, we haven't heard from you yet. What do you think?")
         s = await self.mod.ask(quiet, self.mod.prompt("nudge", channel=self.channel), Speech,
                                fallback=Speech(message="I have nothing to add right now."))

@@ -29,8 +29,9 @@ class FakeAgent:
             await asyncio.sleep(self.delay * self.rng.random() / 3)
         line = self.rng.choice(_LINES).format(x=x)
         if schema is Reaction:
-            value = Reaction(thought=thought, urgency=self.rng.randint(0, 10),
-                             addressing=[x] if "{x}" in line else [], message=line)
+            claim = self.rng.choice([q.role for q in self.state.players])                 if self.rng.random() < 0.12 else ""  # sometimes a (true or bluffed) role claim
+            value = Reaction(thought=thought, urgency=self.rng.randint(0, 10), suspect=x,
+                             addressing=[x] if "{x}" in line else [], message=line, claim=claim)
         elif schema is Speech:
             value = Speech(thought=thought, message=line)
         elif schema is Choice:

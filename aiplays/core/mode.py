@@ -21,6 +21,14 @@ class GameMode(ABC):
     prompts_dir: ClassVar[Path]
     roles: ClassVar[dict[str, Role]]
 
+    def resolve_role(self, text: str) -> str:
+        """Role id named by free text ("Seer", "the seer", "seer"), or "" if none matches."""
+        key = text.strip().lower().removeprefix("the ").replace(" ", "_")
+        if not key:
+            return ""
+        return next((rid for rid, r in self.roles.items()
+                     if key in (rid, r.label.lower().replace(" ", "_"))), "")
+
     def role_label(self, role_id: str) -> str:
         label = self.roles[role_id].label
         return f"an {label}" if label[0].lower() in "aeiou" else f"a {label}"

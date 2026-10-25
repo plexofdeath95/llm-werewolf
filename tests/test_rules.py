@@ -50,3 +50,12 @@ def test_hunter_last_stand():
     for p in st.players[2:]:
         p.alive = False
     assert winner(st) == "village"
+
+
+def test_resolve_role_from_free_text():
+    from aiplays.core.mode import get_mode
+    mode = get_mode("werewolf")
+    assert mode.resolve_role("Seer") == "seer"
+    assert mode.resolve_role("the Alignment Seer") == "alignment_seer"
+    assert mode.resolve_role("jack of all trades") == "jack_of_all_trades"
+    assert mode.resolve_role("") == "" and mode.resolve_role("pirate") == ""

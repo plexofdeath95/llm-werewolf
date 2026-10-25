@@ -13,7 +13,10 @@ class TalkConfig(BaseModel):
     last_penalty: float = 3.0
     second_last_penalty: float = 1.5
     jitter: float = 0.5
-    interrupt_urgency: int = 8
+    interrupt_urgency: int = 9    # named in the last line AND this urgent: a real interruption
+    quorum: float = 0.5           # a react round closes once this share of the table answered...
+    grace_s: float = 4.0          # ...plus this grace for stragglers (who chime in a round later)
+    round_cap_s: float = 25.0     # ...and never waits longer than this once someone answered
 
 
 class SeatConfig(BaseModel):
@@ -28,7 +31,7 @@ class GameConfig(BaseModel):
     deck: list[str] | None = None  # role ids in play (one per seat); None = mode's balanced default
     seed: int | None = None
     max_cost_usd: float = 10.0
-    quick_reasoning: int = 512    # reasoning-token cap for react rounds
+    quick_reasoning: int = 0      # reaction calls: 0 = no hidden reasoning (fast); N = token cap
     deep_reasoning: int = 2048    # cap for votes, night actions, last words
     narrator_model: str | None = None
     reveal_on_death: bool = True
