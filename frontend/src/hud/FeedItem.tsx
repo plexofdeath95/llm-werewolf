@@ -1,6 +1,7 @@
 // One line in the chat feed, styled by event kind and channel.
 import type { GameEvent } from '../api/types'
 import { channelTint } from '../lib/colors'
+import { channelTip, INTERRUPT_TIP, NUDGE_TIP } from '../lib/tips'
 import { nameOf } from '../state/selectors'
 import type { GameView } from '../state/viewTypes'
 
@@ -13,7 +14,7 @@ export function FeedItem({ ev, view }: { ev: GameEvent; view: GameView }) {
   const channel: string | undefined = ev.data.channel
   const tint = channelTint(channel)
   const style = tint ? { background: tint } : undefined
-  const tag = channel && channel !== 'public' ? <span className="chan">{channel}</span> : null
+  const tag = channel && channel !== 'public' ? <span className="chan" data-tip={channelTip(channel)}>{channel}</span> : null
   if (ev.kind === 'phase') {
     const night = ev.data.phase === 'night'
     return <div className={`feed-phase${night ? ' night' : ''}`}>{night ? '🌙' : '☀️'} {ev.text}</div>
@@ -24,8 +25,8 @@ export function FeedItem({ ev, view }: { ev: GameEvent; view: GameView }) {
     return (
       <div className={`feed-speech${last ? ' last-words' : ''}`} style={style}>
         {tag}
-        {ev.data.interrupt && <span className="int-badge">⚡ interrupts</span>}
-        {ev.data.nudged && <span className="int-badge nudge">👉 called on</span>}
+        {ev.data.interrupt && <span className="int-badge" data-tip={INTERRUPT_TIP}>⚡ interrupts</span>}
+        {ev.data.nudged && <span className="int-badge nudge" data-tip={NUDGE_TIP}>👉 called on</span>}
         <b style={{ color: p?.model?.color }}>{p?.name ?? '?'}</b>
         <span className="feed-text">{ev.text}</span>
       </div>

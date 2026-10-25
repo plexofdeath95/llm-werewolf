@@ -1,6 +1,6 @@
 // Live urgency bars + thought snippets for the current react round.
 import { urgencyColor, urgencyEmoji } from '../lib/colors'
-import { clip } from '../lib/format'
+import { urgencyTip } from '../lib/tips'
 import type { GameView } from '../state/viewTypes'
 
 export interface ReactionStripProps {
@@ -20,6 +20,7 @@ export function ReactionStrip({ view, thinking, onSelect }: ReactionStripProps) 
         const won = r && view.speaker === id && !view.roundOpen
         return (
           <button key={id} className={`reaction-chip${won ? ' won' : ''}`} onClick={() => onSelect(id)}
+            data-tip={r ? urgencyTip(r.urgency, r.thought) + (won ? '\n\nWon the floor.' : '') : 'Thinking…'}
             style={{ borderColor: p?.model?.color }}>
             <div className="chip-head">
               <span className="chip-emoji">{r ? urgencyEmoji(r.urgency) : '🤔'}</span>
@@ -29,7 +30,7 @@ export function ReactionStrip({ view, thinking, onSelect }: ReactionStripProps) 
             <div className="urg-bar">
               <div style={{ width: `${(r?.urgency ?? 0) * 10}%`, background: urgencyColor(r?.urgency ?? 0) }} />
             </div>
-            <div className="chip-thought">{r ? clip(r.thought || '…', 90) : 'thinking…'}</div>
+            <div className="chip-thought">{r ? urgencyTip(r.urgency).split(':')[1] : 'thinking…'}</div>
           </button>
         )
       })}

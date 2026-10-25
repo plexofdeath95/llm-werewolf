@@ -1,6 +1,7 @@
 // App shell: routes + top nav (hidden on the full-screen game view).
 import { BrowserRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { MusicControls } from './hud/MusicControls'
+import { TooltipLayer } from './hud/TooltipLayer'
 import { GamePage } from './pages/Game'
 import { History } from './pages/History'
 import { Lobby } from './pages/Lobby'
@@ -23,6 +24,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Nav />
+      <TooltipLayer />
       <Routes>
         <Route path="/" element={<Lobby />} />
         <Route path="/history" element={<History />} />

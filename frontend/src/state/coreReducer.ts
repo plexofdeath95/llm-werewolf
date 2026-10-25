@@ -36,8 +36,6 @@ export function coreReducer(v: GameView, ev: GameEvent): GameView {
       const r = { urgency: ev.data.urgency ?? 0, thought: ev.data.thought ?? '',
         message: ev.data.message ?? '', seq: ev.seq, channel: ev.data.channel }
       next.reactions = { ...next.reactions, [ev.actor!]: r }
-      setBubble(next, ev.actor!, { kind: 'thought', text: r.thought, seq: ev.seq,
-        urgency: r.urgency, channel: r.channel, private: true })
       return addMind(next, ev, 'reaction', r.thought, { urgency: r.urgency })
     }
     case 'speech':

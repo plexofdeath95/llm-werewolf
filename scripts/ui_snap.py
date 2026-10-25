@@ -55,6 +55,9 @@ def main(a: argparse.Namespace) -> None:
         if a.click:
             tag = page.locator(".nametag", has_text=a.click).first
             try:
+                box = tag.bounding_box()  # rest the pointer first: the camera holds still
+                page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+                page.wait_for_timeout(400)
                 tag.click(timeout=3000)
                 page.wait_for_timeout(800)
                 print("click ok; mind panel mentions name:",
@@ -62,6 +65,11 @@ def main(a: argparse.Namespace) -> None:
             except Exception as e:
                 print("CLICK FAILED:", str(e).splitlines()[0])
             page.screenshot(path=OUT / "after_click.png")
+            page.wait_for_timeout(400)
+            tip = page.locator(".tooltip")
+            print("tooltip on hover:", tip.inner_text()[:80].replace("\n", " | ")
+                  if tip.count() else "NONE")
+            page.screenshot(path=OUT / "hover.png")
         browser.close()
     print("game:", game, "| shots in", OUT)
     for name, pts in tracks.items():

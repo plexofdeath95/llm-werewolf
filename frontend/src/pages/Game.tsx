@@ -10,8 +10,8 @@ import { GameHud } from '../hud/GameHud'
 import { loadPref, savePref } from '../music/util'
 import { GameScene } from '../scene/GameScene'
 
-const DEFAULT_TOGGLES: ViewToggles = { god: true, follow: false, orbit: false, stats: true }
-const TOGGLES_KEY = 'view.toggles.v2' // bumped: old saves had the swooping camera on
+const DEFAULT_TOGGLES: ViewToggles = { god: true, follow: true, orbit: false, stats: true }
+const TOGGLES_KEY = 'view.toggles.v3' // bumped whenever the defaults change meaning
 const NO_LIVE = {}
 const LIVE_EDGE = 6 // events; closer than this to the newest event = "watching live"
 
@@ -43,7 +43,7 @@ export function GamePage() {
 
   return (
     <div className="game-page">
-      <GameScene view={view} god={toggles.god} thinking={thinking} live={live}
+      <GameScene view={view} god={toggles.god} thinking={thinking}
         follow={toggles.follow} orbit={toggles.orbit}
         selected={selected || undefined} onSelect={setSelected} />
       <GameHud view={view} events={sock.events} queue={queue} server={sock.server}

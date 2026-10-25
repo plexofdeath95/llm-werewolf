@@ -1,5 +1,6 @@
 // Round + phase, phase timeline, and the alive/dead roster.
 import { teamColor } from '../../lib/colors'
+import { roleTip } from '../../lib/tips'
 import { roleEmoji, roleLabel, shownRole } from '../../state/selectors'
 import { PlayerName } from './PlayerName'
 import type { StatsProps } from './StatsPanel'
@@ -26,7 +27,8 @@ export function OverviewTab({ view, god, onSelect }: StatsProps) {
             return (
               <tr key={pid} className={p.alive ? '' : 'dead'}>
                 <td><PlayerName view={view} pid={pid} onSelect={onSelect} /></td>
-                <td style={{ color: role ? teamColor(view.mode?.roles?.[role]?.team) : undefined }}>
+                <td style={{ color: role ? teamColor(view.mode?.roles?.[role]?.team) : undefined }}
+                  data-tip={roleTip(view, role)}>
                   {role ? `${roleEmoji(view, role)} ${roleLabel(view, role)}` : '❔'}
                 </td>
                 <td className="muted">

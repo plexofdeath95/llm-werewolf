@@ -1,7 +1,6 @@
 // The 3D game room: tavern, round table, seated avatars, night arcs, camera.
 import { ContactShadows } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
-import type { LiveThought } from '../hooks/useGameSocket'
 import { isNight } from '../state/selectors'
 import type { GameView } from '../state/viewTypes'
 import { Arcs } from './Arcs'
@@ -16,7 +15,6 @@ export interface GameSceneProps {
   view: GameView
   god: boolean
   thinking: Set<string>
-  live: Record<string, LiveThought>
   follow: boolean
   orbit: boolean
   selected?: string
@@ -38,7 +36,7 @@ export function GameScene(p: GameSceneProps) {
         const player = view.players[pid]
         return (
           <Seat key={pid} view={view} player={player} god={p.god}
-            thinking={p.thinking.has(pid)} live={p.live[pid]}
+            thinking={p.thinking.has(pid)}
             selected={p.selected === pid} onSelect={p.onSelect} />
         )
       })}

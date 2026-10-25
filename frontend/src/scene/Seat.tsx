@@ -1,8 +1,9 @@
 // One seat: positions an Avatar around the table and attaches its Html overlays.
 import { Html } from '@react-three/drei'
-import type { LiveThought } from '../hooks/useGameSocket'
+import { cameraHold } from '../lib/cameraHold'
 import { seatFacing, seatPosition } from '../lib/seats'
-import { roleEmoji, roleLabel, shownRole, visibleBubble } from '../state/selectors'
+import { playerTip, roleTip } from '../lib/tips'
+import { roleEmoji, shownRole, visibleBubble } from '../state/selectors'
 import type { GameView, PlayerView } from '../state/viewTypes'
 import { Avatar } from './Avatar'
 import { BubbleCard } from './BubbleCard'
@@ -12,18 +13,20 @@ export interface SeatProps {
   player: PlayerView
   god: boolean
   thinking: boolean
-  live?: LiveThought
   selected: boolean
   onSelect: (pid: string) => void
 }
 
-export function Seat({ view, player, god, thinking, live, selected, onSelect }: SeatProps) {
+export function Seat({ view, player, god, thinking, selected, onSelect }: SeatProps) {
   const count = view.order.length
   const pos = seatPosition(player.seat, count)
   const reaction = view.roundOpen ? view.reactions[player.id] : undefined
   const role = shownRole(player, god)
   const color = player.model?.color ?? '#999'
-  const liveText = live ? live.draft || live.thought : undefined
+  // Speech stays up for the current speaker; votes show during the vote; anyone else whose
+  // model call is in flight gets a "thinking" indicator.
+  const b = visibleBubble(view.bubbles[player.id], god)
+  const shown = b && (b.kind === 'speech' ? view.speaker === player.id : view.phase === 'vote')
   return (
     <group position={pos} rotation={[0, seatFacing(player.seat, count), 0]}>
       <Avatar
@@ -39,10 +42,8 @@ export function Seat({ view, player, god, thinking, live, selected, onSelect }: 
         <Html position={[0, 2.35, 0]} center zIndexRange={[20, 0]}>
           <div className="bubble-anchor">
             <BubbleCard
-              bubble={visibleBubble(view.bubbles[player.id], god)}
+              bubble={shown ? b : undefined}
               thinking={thinking && player.alive}
-              liveText={liveText}
-              showThoughts={god}
             />
           </div>
         </Html>
@@ -50,9 +51,12 @@ export function Seat({ view, player, god, thinking, live, selected, onSelect }: 
           {/* stopPropagation: otherwise the click bubbles to the canvas, which sees no 3D hit
               and fires onPointerMissed, deselecting the player we just selected. */}
           <div className={`nametag${player.alive ? '' : ' dead'}`} style={{ borderColor: color }}
+            data-tip={playerTip(view, player.id, god)}
+            onPointerEnter={() => { cameraHold.on = true }}
+            onPointerLeave={() => { cameraHold.on = false }}
             onClick={(e) => { e.stopPropagation(); onSelect(player.id) }}>
             <div className="nametag-name">
-              {role ? <span title={roleLabel(view, role)}>{roleEmoji(view, role)} </span> : null}
+              {role ? <span data-tip={roleTip(view, role)}>{roleEmoji(view, role)} </span> : null}
               {player.name}
               {!player.alive && ' 👻'}
             </div>
