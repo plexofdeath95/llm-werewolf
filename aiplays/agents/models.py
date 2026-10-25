@@ -16,7 +16,7 @@ def build_model(entry: ModelEntry, reasoning_tokens: int | None) -> LiteLlm:
     return LiteLlm(
         model=f"openrouter/{entry.slug}",
         max_tokens=(reasoning_tokens or 0) + OUTPUT_HEADROOM,
-        num_retries=2,
-        timeout=180,
+        num_retries=1,
+        timeout=120,
         **extra,
     )

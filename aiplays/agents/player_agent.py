@@ -14,6 +14,9 @@ from aiplays.agents.turn import run_turn
 from aiplays.settings import ModelEntry
 
 _RETRY = "Your last reply was not valid ({error}). Reply again with ONLY the JSON object."
+# Hard deadline per call (quick react / deep decision). A stalled provider stream would
+# otherwise hold the whole table; on timeout the caller falls back to a safe default.
+DEADLINE = {False: 90.0, True: 150.0}
 
 
 class PlayerAgent:
@@ -42,7 +45,11 @@ class PlayerAgent:
         async with self._sem:
             for attempt in range(2):
                 try:
-                    raw, thoughts, usage = await run_turn(self._runner, *self._ids, text, on_delta)
+                    raw, thoughts, usage = await asyncio.wait_for(
+                        run_turn(self._runner, *self._ids, text, on_delta), DEADLINE[deep])
+                except TimeoutError:
+                    reply.error = f"no answer within {DEADLINE[deep]:.0f}s"
+                    break
                 except Exception as e:  # provider/network failure after LiteLLM retries
                     reply.error = f"{type(e).__name__}: {e}"
                     break
