@@ -1,33 +1,52 @@
+"""Deck building and win conditions."""
 import random
 
-from aiplays.core.state import GameState, Player
-from aiplays.modes.werewolf.roles import assign, distribution, summary
+from aiplays.modes.werewolf.deck import default_deck, sizes
+from aiplays.modes.werewolf.roles import ROLES
 from aiplays.modes.werewolf.win import winner
+from rolekit import game
 
 
-def _state(n: int) -> GameState:
-    return GameState("g", "werewolf", 1, [Player(f"p{i}", f"N{i}", i, "m") for i in range(n)])
+def test_faction_sizes():
+    assert sizes(5) == (4, 1, 0)
+    assert sizes(8) == (5, 2, 1)
+    assert sizes(16) == (10, 4, 2)
 
 
-def test_distribution_sizes():
-    assert sorted(distribution(5)) == sorted(["werewolf", "seer"] + ["villager"] * 3)
-    assert distribution(8).count("werewolf") == 2 and "doctor" in distribution(8)
-    assert distribution(16).count("werewolf") == 4
+def test_classic_deck_has_core_roles():
+    deck = default_deck(8, random.Random(1), style="classic")
+    assert deck.count("alpha") == 1 and "seer" in deck and "doctor" in deck
+    assert len(deck) == 8
 
 
-def test_summary_text():
-    assert summary(6) == "1 Werewolf, 1 Seer, 1 Doctor, 3 Villagers"
+def test_mixed_decks_are_valid_and_unique_per_faction():
+    for seed in range(20):
+        deck = default_deck(10, random.Random(seed))
+        assert len(deck) == 10 and deck.count("alpha") == 1
+        specials = [r for r in deck if r != "villager"]
+        assert len(specials) == len(set(specials))
+        assert all(ROLES[r].group == 1 for r in deck)
 
 
-def test_winner_conditions():
-    st = _state(6)
-    assign(st, random.Random(3))
+def test_village_wins_when_wolves_gone():
+    st = game("alpha", "seer", "villager", "doctor", "villager")
+    st.players[0].alive = False
+    assert winner(st) == "village"
+
+
+def test_wolves_win_at_parity():
+    st = game("alpha", "wolf", "villager", "doctor", "villager")
+    st.players[3].alive = st.players[4].alive = False
+    assert winner(st) == "wolves"
+
+
+def test_game_continues_otherwise():
+    st = game("alpha", "seer", "villager", "doctor", "villager")
     assert winner(st) is None
-    for p in st.on_team("wolves"):
+
+
+def test_hunter_last_stand():
+    st = game("alpha", "hunter", "villager", "doctor", "villager")
+    for p in st.players[2:]:
         p.alive = False
     assert winner(st) == "village"
-    st = _state(6)
-    assign(st, random.Random(3))
-    for p in [p for p in st.players if p.team == "village"][:4]:
-        p.alive = False
-    assert winner(st) == "wolves"

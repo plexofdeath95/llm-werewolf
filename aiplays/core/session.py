@@ -55,8 +55,11 @@ class GameSession:
         status = "finished"
         try:
             self.state.winner = await self.mode.play(self.mod)
+            won = self.mode.winners(self.state, self.state.winner)
+            for p in self.state.players:
+                p.won = p.id in won
             await self.mod.emit(Kind.GAME_OVER, f"The {self.state.winner} win!", data={
-                "winner": self.state.winner, "cost": self.budget.spent,
+                "winner": self.state.winner, "winners": won, "cost": self.budget.spent,
                 "roles": {p.id: p.role for p in self.state.players}})
         except asyncio.CancelledError:
             status = "cancelled"

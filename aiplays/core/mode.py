@@ -26,7 +26,7 @@ class GameMode(ABC):
         return f"an {label}" if label[0].lower() in "aeiou" else f"a {label}"
 
     @abstractmethod
-    def default_deck(self, n: int) -> list[str]:
+    def default_deck(self, n: int, style: str = "mixed") -> list[str]:
         """A balanced list of n role ids."""
 
     @abstractmethod
@@ -41,6 +41,10 @@ class GameMode(ABC):
     @abstractmethod
     async def play(self, mod: Moderator) -> str:
         """Run the game to completion and return the winning team."""
+
+    def winners(self, state: GameState, result: str) -> list[str]:
+        """Ids of the players who won (default: everyone on the winning team)."""
+        return [p.id for p in state.players if p.team == result]
 
     def describe(self) -> dict:
         return {"id": self.id, "name": self.name,

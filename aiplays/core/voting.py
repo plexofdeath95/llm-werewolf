@@ -37,7 +37,10 @@ def tally(votes: dict[str, str | None]) -> Counter:
 
 def plurality(votes: dict[str, str | None], rng: random.Random | None = None) -> str | None:
     """Most-voted target. Ties: random pick if rng given, else None (no elimination)."""
-    counts = tally(votes)
+    return leader(tally(votes), rng)
+
+
+def leader(counts: Counter, rng: random.Random | None = None) -> str | None:
     if not counts:
         return None
     top = max(counts.values())

@@ -25,11 +25,11 @@ def modes() -> list[dict]:
 
 
 @router.get("/modes/{mode_id}/deck")
-def deck(mode_id: str, n: int) -> list[str]:
+def deck(mode_id: str, n: int, style: str = "mixed") -> list[str]:
     try:
         mode = get_mode(mode_id)
     except KeyError:
         raise HTTPException(404, f"unknown mode {mode_id}")
     if not mode.min_players <= n <= mode.max_players:
         raise HTTPException(400, f"{mode.name} needs {mode.min_players}-{mode.max_players} players")
-    return mode.default_deck(n)
+    return mode.default_deck(n, style=style)

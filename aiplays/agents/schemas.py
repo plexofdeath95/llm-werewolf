@@ -40,6 +40,21 @@ class Speech(BaseModel):
     message: str = Field("", description="What you say aloud: 1-3 natural sentences.")
 
 
+class Action(BaseModel):
+    """Use one of your listed abilities (or skip)."""
+    thought: str = Field("", description=THOUGHT)
+    action: str = Field("skip", description="Exactly one action name from the list, or 'skip'.")
+    targets: list[str] = Field(default_factory=list,
+                               description="Player names for the action, as many as it asks for.")
+    option: str = Field("", description="Extra option if the action asks for one, else empty.")
+    reason: str = Field("", description="One short sentence on why (private).")
+
+    @field_validator("targets", mode="before")
+    @classmethod
+    def _listify(cls, v: object) -> list[str]:
+        return Reaction._listify(v)
+
+
 class Choice(BaseModel):
     """Pick one option: votes, night kills, inspections, protections."""
     thought: str = Field("", description=THOUGHT)

@@ -16,6 +16,7 @@ class Player:
     alive: bool = True
     died_round: int | None = None
     death_cause: str | None = None
+    won: bool | None = None
 
 
 @dataclass

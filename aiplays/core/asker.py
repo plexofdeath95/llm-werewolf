@@ -54,6 +54,8 @@ class Asker:
         def on_delta(thought: str, draft: str | None) -> None:
             self.bus.flash({"actor": p.id, "thought": thought, "draft": draft})
 
+        on_delta("", None)  # "call started": thinking animations begin for every model
+
         reply = await self.agents[p.id].ask(prompt, schema, deep=deep, choices=choices,
                                             on_delta=on_delta)
         await self._account(p.id, reply, schema.__name__)

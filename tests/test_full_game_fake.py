@@ -1,15 +1,19 @@
 """A whole Werewolf game with offline FakeAgents: engine invariants, no API calls."""
+import random
+
 from aiplays.core.config import GameConfig, SeatConfig
 from aiplays.core.events import Kind
 from aiplays.core.session import GameSession
 from aiplays.db.repo import Repo
+from aiplays.modes.werewolf.deck import default_deck
 
 
-async def _play(tmp_path, seed: int) -> GameSession:
-    repo = Repo(f"sqlite+aiosqlite:///{(tmp_path / f'g{seed}.db').as_posix()}")
+async def _play(tmp_path, seed: int, style: str = "mixed") -> GameSession:
+    repo = Repo(f"sqlite+aiosqlite:///{(tmp_path / f'g{seed}{style}.db').as_posix()}")
     await repo.init()
+    deck = default_deck(8, random.Random(seed), style=style)
     cfg = GameConfig(seats=[SeatConfig(model_id="claude-haiku-5.5")] * 8, seed=seed,
-                     fake=True, fake_delay=0)
+                     deck=deck, fake=True, fake_delay=0)
     s = GameSession(cfg, repo)
     await s.start()
     await s.task
@@ -17,11 +21,11 @@ async def _play(tmp_path, seed: int) -> GameSession:
 
 
 async def test_fake_games_finish_with_consistent_events(tmp_path):
-    for seed in range(5):
-        s = await _play(tmp_path, seed)
+    for seed, style in [(i, "classic") for i in range(3)] + [(i, "mixed") for i in range(8)]:
+        s = await _play(tmp_path, seed, style)
         evs = s.bus.history
-        assert evs[-1].kind == Kind.GAME_OVER
-        assert s.state.winner in {"village", "wolves"}
+        assert evs[-1].kind == Kind.GAME_OVER, [e.text for e in evs[-3:]]
+        assert s.state.winner in {"village", "wolves", "neutral", "nobody"}
         dead_at: dict[str, int] = {}
         wolves = {p.id for p in s.state.players if p.team == "wolves"}
         for ev in evs:

@@ -3,7 +3,7 @@ import asyncio
 import random
 
 from aiplays.agents.base import Delta, Reply, T
-from aiplays.agents.schemas import Choice, Reaction, Speech
+from aiplays.agents.schemas import Action, Choice, Reaction, Speech
 from aiplays.core.state import GameState, Player
 
 _LINES = [
@@ -36,6 +36,12 @@ class FakeAgent:
         elif schema is Choice:
             value = Choice(thought=thought, target=self.rng.choice(choices or others),
                            reason=f"Gut feeling about {x}.")
+        elif schema is Action:  # choices look like "skip" or "heal:Bob+Carol|option"
+            pick = self.rng.choice(choices or ["skip"])
+            name, _, rest = pick.partition(":")
+            names, _, option = rest.partition("|")
+            value = Action(thought=thought, action=name, targets=names.split("+") if names else [],
+                           option=option, reason=f"Acting on a hunch about {x}.")
         else:
             value = schema()
         return Reply(value=value, thoughts=f"(fake reasoning) Considering {x}...", raw="")  # type: ignore[arg-type]

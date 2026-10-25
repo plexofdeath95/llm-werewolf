@@ -43,7 +43,7 @@ class Repo:
             for p in st.players:
                 await s.execute(update(PlayerRow).where(
                     PlayerRow.game_id == st.game_id, PlayerRow.player_id == p.id).values(
-                    alive=p.alive, died_round=p.died_round, death_cause=p.death_cause))
+                    alive=p.alive, died_round=p.died_round, death_cause=p.death_cause, won=p.won))
 
     async def list_games(self, limit: int = 100) -> list[dict]:
         async with self.session() as s:

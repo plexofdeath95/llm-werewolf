@@ -37,6 +37,7 @@ class PlayerRow(Base):
     alive: Mapped[bool] = mapped_column(default=True)
     died_round: Mapped[int | None] = mapped_column(Integer, nullable=True)
     death_cause: Mapped[str | None] = mapped_column(String, nullable=True)
+    won: Mapped[bool | None] = mapped_column(nullable=True)
 
 
 class EventRow(Base):
