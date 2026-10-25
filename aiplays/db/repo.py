@@ -7,19 +7,21 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from aiplays.core.config import GameConfig
 from aiplays.core.events import GameEvent
 from aiplays.core.state import GameState
-from aiplays.db.tables import Base, EventRow, GameRow, PlayerRow
+from aiplays.db import migrate
+from aiplays.db.tables import EventRow, GameRow, PlayerRow
 from aiplays.settings import get_catalog
 
 
 class Repo:
     def __init__(self, db_url: str):
+        self.url = db_url
         self.engine = create_async_engine(db_url)
         event.listen(self.engine.sync_engine, "connect", _fast_sqlite)
         self.session = async_sessionmaker(self.engine, expire_on_commit=False)
 
     async def init(self) -> None:
-        async with self.engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+        """Apply Alembic migrations (schema changes live in migrations/versions)."""
+        await migrate.upgrade(self.url)
 
     async def create_game(self, st: GameState, cfg: GameConfig) -> None:
         cat = get_catalog()

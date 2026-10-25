@@ -6,6 +6,7 @@ from aiplays.core.events import Kind
 from aiplays.core.session import GameSession
 from aiplays.db.repo import Repo
 from aiplays.modes.werewolf.deck import default_deck
+from aiplays.modes.werewolf.win import team_of
 
 
 async def _play(tmp_path, seed: int, style: str = "mixed") -> GameSession:
@@ -27,7 +28,9 @@ async def test_fake_games_finish_with_consistent_events(tmp_path):
         assert evs[-1].kind == Kind.GAME_OVER, [e.text for e in evs[-3:]]
         assert s.state.winner in {"village", "wolves", "neutral", "nobody"}
         dead_at: dict[str, int] = {}
-        wolves = {p.id for p in s.state.players if p.team == "wolves"}
+        # dealt wolves plus anyone who became one (an Orphan or Amnesiac copying a wolf role)
+        wolves = {p.id for p in s.state.players
+                  if p.team == "wolves" or team_of(s.state, p) == "wolves"}
         for ev in evs:
             if ev.kind == Kind.DEATH:
                 dead_at[ev.target] = ev.seq

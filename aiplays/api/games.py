@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 from aiplays.core.config import GameConfig
 from aiplays.core.hub import get_hub
 from aiplays.core.mode import get_mode
+from aiplays.db.stats import report
 from aiplays.settings import get_catalog
 
 router = APIRouter(prefix="/api/games")
@@ -39,6 +40,12 @@ async def start(cfg: GameConfig) -> dict:
 @router.get("")
 async def list_games() -> list[dict]:
     return await get_hub().repo.list_games()
+
+
+@router.get("/stats")
+async def stats(include_fake: bool = False) -> dict:
+    """Per-model benchmark tables (same queries as scripts/stats.py)."""
+    return await report(get_hub().repo, include_fake)
 
 
 @router.get("/{game_id}")
