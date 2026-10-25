@@ -25,7 +25,8 @@ def _validate(cfg: GameConfig) -> None:
     cat = get_catalog()
     for model_id in [s.model_id for s in cfg.seats] + [cfg.narrator_model or cfg.seats[0].model_id]:
         try:
-            cat.get(model_id)
+            if not cat.get(model_id).enabled:
+                raise HTTPException(400, f"model {model_id} is disabled in config/models.yaml")
         except KeyError:
             raise HTTPException(400, f"unknown model {model_id}")
 

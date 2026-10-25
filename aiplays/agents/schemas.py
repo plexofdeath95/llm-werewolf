@@ -1,8 +1,10 @@
 """Structured replies players give. Shared by every game mode."""
 from pydantic import BaseModel, Field, field_validator
 
-THOUGHT = ("Your private reasoning right now. Spectators can read it; other players never can. "
-           "Be candid: suspicions, plans, bluffs.")
+# Worded as an in-character monologue: asking for "private reasoning" trips some providers'
+# content filters (Claude returns finish_reason=content_filter).
+THOUGHT = ("Your character's inner monologue about the game right now (suspicions, plans, "
+           "bluffs). Shown to the audience, never to other players.")
 
 
 class Reaction(BaseModel):

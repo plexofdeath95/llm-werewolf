@@ -22,6 +22,7 @@ class ModelEntry(BaseModel):
     provider: str = ""
     color: str = "#888888"
     tier: str = "standard"
+    enabled: bool = True
 
 
 class Catalog(BaseModel):
@@ -38,7 +39,7 @@ class Catalog(BaseModel):
     def roster(self, n: int | None = None) -> list[str]:
         """n model ids: every unique model (standard tier first) before any repeats."""
         n = n or self.default_players
-        order = sorted(self.models, key=lambda m: m.tier != "standard")
+        order = sorted((m for m in self.models if m.enabled), key=lambda m: m.tier != "standard")
         return [order[i % len(order)].id for i in range(n)]
 
 
