@@ -27,6 +27,8 @@ export interface ModelEntry {
   provider: string
   color: string
   tier: string
+  enabled: boolean
+  stream: boolean
 }
 
 export interface Persona { id: string; label: string; text: string }

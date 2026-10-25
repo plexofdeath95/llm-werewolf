@@ -23,7 +23,7 @@ export function SettingsCard({ form }: { form: LobbyForm }) {
           narrator
           <select value={s.narrator} onChange={(e) => set('narrator', e.target.value)}>
             <option value="">— none —</option>
-            {catalog?.models.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+            {catalog?.models.filter((m) => m.enabled).map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
           </select>
         </label>
         {num('rounds', 'discussion rounds', 1, 'Time limit: each day ends after this many rounds '

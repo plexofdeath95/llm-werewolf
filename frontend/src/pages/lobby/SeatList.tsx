@@ -23,7 +23,7 @@ export function SeatList({ form }: { form: LobbyForm }) {
         <span className="muted">{unique} unique model{unique === 1 ? '' : 's'}</span>
       </div>
       {seats.map((seat, i) => (
-        <SeatRow key={i} index={i} seat={seat} models={catalog.models} personas={catalog.personas}
+        <SeatRow key={i} index={i} seat={seat} models={catalog.models.filter((m) => m.enabled)} personas={catalog.personas}
           onChange={(s) => setSeats(seats.map((x, j) => (j === i ? s : x)))}
           onRemove={seats.length > min ? () => form.setCount(seats.length - 1) : undefined} />
       ))}
