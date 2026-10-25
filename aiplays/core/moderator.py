@@ -23,8 +23,8 @@ class Moderator(Asker):
         self.cursor: dict[str, int] = {}
         self.rng = random.Random(state.seed)
 
-    def prompt(self, name: str, **values: object) -> str:
-        return render(name, self.mode.prompts_dir, round=self.state.round, **values)
+    def prompt(self, template: str, /, **values: object) -> str:
+        return render(template, self.mode.prompts_dir, round=self.state.round, **values)
 
     async def announce(self, text: str, *, visible_to: list[str] | None = None,
                        narrate: bool = False, **data) -> None:

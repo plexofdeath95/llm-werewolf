@@ -11,8 +11,9 @@ def _template(path: Path) -> Template:
     return Template(path.read_text(encoding="utf-8"))
 
 
-def render(name: str, mode_dir: Path | None = None, **values: object) -> str:
+def render(template: str, mode_dir: Path | None = None, /, **values: object) -> str:
+    """Positional-only template/mode_dir, so any key (even `name`) can be a value."""
     for folder in (mode_dir, SHARED):
-        if folder and (folder / f"{name}.md").exists():
-            return _template(folder / f"{name}.md").safe_substitute(**values).strip()
-    raise FileNotFoundError(f"prompt template not found: {name}")
+        if folder and (folder / f"{template}.md").exists():
+            return _template(folder / f"{template}.md").safe_substitute(**values).strip()
+    raise FileNotFoundError(f"prompt template not found: {template}")
