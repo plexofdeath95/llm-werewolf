@@ -1,7 +1,7 @@
 """Repo: async persistence for games, players and events (SQLite via aiosqlite)."""
 import time
 
-from sqlalchemy import select, update
+from sqlalchemy import event, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from aiplays.core.config import GameConfig
@@ -14,6 +14,7 @@ from aiplays.settings import get_catalog
 class Repo:
     def __init__(self, db_url: str):
         self.engine = create_async_engine(db_url)
+        event.listen(self.engine.sync_engine, "connect", _fast_sqlite)
         self.session = async_sessionmaker(self.engine, expire_on_commit=False)
 
     async def init(self) -> None:
@@ -63,6 +64,14 @@ class Repo:
             rows = await s.scalars(select(EventRow).where(EventRow.game_id == game_id)
                                    .order_by(EventRow.seq))
             return [GameEvent(**_row(r)) for r in rows]
+
+
+def _fast_sqlite(conn, _record) -> None:
+    """WAL + relaxed fsync: one commit per event stays cheap (hundreds per game)."""
+    cur = conn.cursor()
+    cur.execute("PRAGMA journal_mode=WAL")
+    cur.execute("PRAGMA synchronous=NORMAL")
+    cur.close()
 
 
 def _row(obj) -> dict:

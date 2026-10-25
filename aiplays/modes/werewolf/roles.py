@@ -24,8 +24,8 @@ def distribution(n: int) -> list[str]:
     return roles + ["villager"] * (n - len(roles))
 
 
-def assign(state: GameState, rng: random.Random) -> None:
-    roles = distribution(len(state.players))
+def assign(state: GameState, rng: random.Random, deck: list[str] | None = None) -> None:
+    roles = list(deck) if deck else distribution(len(state.players))
     rng.shuffle(roles)
     for p, r in zip(state.players, roles):
         p.role, p.team = r, ROLES[r].team

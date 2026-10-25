@@ -31,7 +31,7 @@ class GameSession:
         players = [Player(id=f"p{i}", name=s.name or names[i], seat=i, model_id=s.model_id,
                           persona=s.persona) for i, s in enumerate(seats)]
         self.state = GameState(game_id=self.id, mode=cfg.mode, seed=seed, players=players)
-        self.mode.assign_roles(self.state, rng)
+        self.mode.assign_roles(self.state, rng, cfg.deck)
         self.bus = EventBus(self.id, sink=repo.add_event)
         self.gate, self.budget = Gate(), Budget(cfg.max_cost_usd)
         self.task: asyncio.Task | None = None

@@ -26,8 +26,13 @@ class GameMode(ABC):
         return f"an {label}" if label[0].lower() in "aeiou" else f"a {label}"
 
     @abstractmethod
-    def assign_roles(self, state: GameState, rng: random.Random) -> None:
-        """Set role/team on every player."""
+    def default_deck(self, n: int) -> list[str]:
+        """A balanced list of n role ids."""
+
+    @abstractmethod
+    def assign_roles(self, state: GameState, rng: random.Random,
+                     deck: list[str] | None = None) -> None:
+        """Set role/team on every player (from deck, or the default deck)."""
 
     @abstractmethod
     def briefing(self, state: GameState, player: Player, reveal_models: bool) -> str:

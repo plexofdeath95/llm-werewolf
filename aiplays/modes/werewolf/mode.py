@@ -24,8 +24,12 @@ class WerewolfMode(GameMode):
     prompts_dir = Path(__file__).parent / "prompts"
     roles = ww.ROLES
 
-    def assign_roles(self, state: GameState, rng: random.Random) -> None:
-        ww.assign(state, rng)
+    def default_deck(self, n: int) -> list[str]:
+        return ww.distribution(n)
+
+    def assign_roles(self, state: GameState, rng: random.Random,
+                     deck: list[str] | None = None) -> None:
+        ww.assign(state, rng, deck)
 
     def briefing(self, state: GameState, player: Player, reveal_models: bool) -> str:
         cat = get_catalog()

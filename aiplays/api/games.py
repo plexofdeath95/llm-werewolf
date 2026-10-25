@@ -1,0 +1,49 @@
+"""Start games and read stored games."""
+from fastapi import APIRouter, HTTPException
+
+from aiplays.core.config import GameConfig
+from aiplays.core.hub import get_hub
+from aiplays.core.mode import get_mode
+from aiplays.settings import get_catalog
+
+router = APIRouter(prefix="/api/games")
+
+
+def _validate(cfg: GameConfig) -> None:
+    try:
+        mode = get_mode(cfg.mode)
+    except KeyError:
+        raise HTTPException(400, f"unknown mode {cfg.mode}")
+    n = len(cfg.seats)
+    if not mode.min_players <= n <= mode.max_players:
+        raise HTTPException(400, f"{mode.name} needs {mode.min_players}-{mode.max_players} players")
+    if cfg.deck is not None:
+        unknown = [r for r in cfg.deck if r not in mode.roles]
+        if len(cfg.deck) != n or unknown:
+            raise HTTPException(400, f"deck must list {n} known roles; unknown: {unknown}")
+    cat = get_catalog()
+    for model_id in [s.model_id for s in cfg.seats] + [cfg.narrator_model or cfg.seats[0].model_id]:
+        try:
+            cat.get(model_id)
+        except KeyError:
+            raise HTTPException(400, f"unknown model {model_id}")
+
+
+@router.post("")
+async def start(cfg: GameConfig) -> dict:
+    _validate(cfg)
+    session = await get_hub().start(cfg)
+    return {"id": session.id}
+
+
+@router.get("")
+async def list_games() -> list[dict]:
+    return await get_hub().repo.list_games()
+
+
+@router.get("/{game_id}")
+async def get_game(game_id: str) -> dict:
+    game = await get_hub().repo.get_game(game_id)
+    if not game:
+        raise HTTPException(404, "game not found")
+    return game

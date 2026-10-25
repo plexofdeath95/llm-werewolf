@@ -65,3 +65,9 @@ def get_settings() -> Settings:
 def get_catalog() -> Catalog:
     raw = yaml.safe_load(get_settings().catalog_file.read_text(encoding="utf-8"))
     return Catalog(**raw)
+
+
+@lru_cache
+def get_personas() -> list[dict]:
+    path = ROOT / "config" / "personas.yaml"
+    return yaml.safe_load(path.read_text(encoding="utf-8")).get("personas", [])
