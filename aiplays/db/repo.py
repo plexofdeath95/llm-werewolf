@@ -1,7 +1,7 @@
 """Repo: async persistence for games, players and events (SQLite via aiosqlite)."""
 import time
 
-from sqlalchemy import event, select, update
+from sqlalchemy import event, func, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from aiplays.core.config import GameConfig
@@ -12,6 +12,9 @@ from aiplays.db.tables import EventRow, GameRow, PlayerRow
 from aiplays.settings import get_catalog
 
 
+ORPHAN_AFTER_S = 15 * 60
+
+
 class Repo:
     def __init__(self, db_url: str):
         self.url = db_url
@@ -20,11 +23,17 @@ class Repo:
         self.session = async_sessionmaker(self.engine, expire_on_commit=False)
 
     async def init(self) -> None:
-        """Apply Alembic migrations, then close out games orphaned by a restart."""
+        """Apply Alembic migrations, then close out games orphaned by a dead process."""
         await migrate.upgrade(self.url)
-        async with self.session.begin() as s:  # live games never survive a process restart
-            await s.execute(update(GameRow).where(GameRow.status == "running")
-                            .values(status="cancelled", ended_at=time.time()))
+        # Only games that went silent: another process (e.g. run_batch) may own a live one,
+        # and live games always emit within the per-call deadlines.
+        latest = (select(func.max(EventRow.ts)).where(EventRow.game_id == GameRow.id)
+                  .scalar_subquery())
+        quiet_since = func.coalesce(latest, GameRow.created_at)
+        async with self.session.begin() as s:
+            await s.execute(update(GameRow).where(
+                GameRow.status == "running", quiet_since < time.time() - ORPHAN_AFTER_S)
+                .values(status="cancelled", ended_at=time.time()))
 
     async def create_game(self, st: GameState, cfg: GameConfig) -> None:
         cat = get_catalog()
