@@ -58,9 +58,6 @@ export function insightReducer(v: GameView, ev: GameEvent): GameView {
       else if (ev.data.nudged) pop(v, ev.actor, { emoji: '👉', tip: 'Called on by the moderator', private: priv }, ev.seq)
       return v
     }
-    case 'vote':
-      pop(v, ev.actor, { emoji: '🗳️', tip: 'Voted', private: priv }, ev.seq)
-      return v
     case 'action':
       if (ev.data.action === 'result' && SAVED.test(ev.text)) {
         pop(v, ev.actor, { emoji: '🛡️', tip: ev.text, private: true }, ev.seq)

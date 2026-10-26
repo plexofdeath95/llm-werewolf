@@ -16,6 +16,7 @@ export interface AvatarProps {
   speaking: boolean
   thinking: boolean
   wolfEyes: boolean // god view at night: the pack's eyes glow red
+  dim?: boolean // someone else is on a night walk: fade into the background
   onSelect: () => void
   children?: ReactNode // floor rings + Html overlays (name tag, bubbles)
 }
@@ -52,7 +53,7 @@ export function Avatar(p: AvatarProps) {
 
   const mat = (color: string) => (
     <meshStandardMaterial color={ghost ? '#cfe3ff' : color} flatShading
-      transparent={ghost} opacity={ghost ? 0.32 : 1}
+      transparent={ghost || p.dim} opacity={ghost ? 0.32 : p.dim ? 0.3 : 1}
       emissive={p.speaking ? color : '#000000'} emissiveIntensity={p.speaking ? 0.35 : 0} />
   )
   const eyes = p.wolfEyes && !ghost

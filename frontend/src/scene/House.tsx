@@ -6,7 +6,7 @@ import * as THREE from 'three'
 import { seatAngle } from '../lib/seats'
 import type { GameView } from '../state/viewTypes'
 
-export const HOUSE_R = 5.0
+export const HOUSE_R = 4.7
 
 function House({ seat, count, shown, dead }: { seat: number; count: number; shown: boolean; dead: boolean }) {
   const ref = useRef<THREE.Group>(null)

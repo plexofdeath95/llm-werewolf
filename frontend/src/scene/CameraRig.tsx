@@ -17,6 +17,7 @@ export interface CameraRigProps {
 }
 
 const DIR = new THREE.Vector3(0, 9.2, 9.6).normalize()
+const DIR_NIGHT = new THREE.Vector3(0, 10, 7.2).normalize() // steeper: the house ring fits closer
 const CENTER = new THREE.Vector3(0, 0.4, 0)
 const DOLLY = 0.16 // how far the camera drifts toward the speaker
 const GAZE = 0.5 // how far the look target pans from the table centre to the speaker
@@ -29,8 +30,9 @@ export function CameraRig({ focusSeat, count, follow, orbit, wide }: CameraRigPr
   useFrame(({ camera, size }, dt) => {
     if (orbit || cameraHold.on) return
     const fov = (camera as THREE.PerspectiveCamera).fov ?? 46
-    const f = frame(wide ? NIGHT_RING : DAY_RING, [DIR.x, DIR.y, DIR.z], fov, size.width, size.height)
-    goal.copy(DIR).multiplyScalar(f.distance).add(new THREE.Vector3(0, 0, f.lookZ))
+    const dir = wide ? DIR_NIGHT : DIR
+    const f = frame(wide ? NIGHT_RING : DAY_RING, [dir.x, dir.y, dir.z], fov, size.width, size.height)
+    goal.copy(dir).multiplyScalar(f.distance).add(new THREE.Vector3(0, 0, f.lookZ))
     look.set(CENTER.x, CENTER.y, CENTER.z + f.lookZ)
     if (follow && focusSeat !== undefined && count > 0 && !wide) {
       const [x, , z] = seatPosition(focusSeat, count)

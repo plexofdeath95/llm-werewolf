@@ -39,7 +39,7 @@
 .cost-bar { width: 150px; height: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
 .cost-bar > div { height: 100%; transition: width 0.4s; }
 
-.hud-right { position: absolute; top: 96px; right: 12px; bottom: 150px; width: min(380px, 42vw); display: flex; }
+.hud-right { position: absolute; top: 96px; right: 12px; bottom: 150px; width: min(380px, 26vw); display: flex; }
 .feed { flex: 1; overflow-y: auto; overflow-x: hidden; overflow-wrap: anywhere; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
 .feed > div { animation: feed-in 0.35s ease; border-radius: 8px; padding: 5px 8px; line-height: 1.35; }
 @keyframes feed-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
@@ -58,7 +58,7 @@
 .kind-error { color: #ffb36b; font-size: 12px; }
 .feed-more, .feed-empty { text-align: center; color: var(--muted); font-size: 12px; }
 
-.hud-left { position: absolute; top: 56px; left: 12px; bottom: 150px; width: min(360px, 40vw); display: flex; flex-direction: column; gap: 8px; }
+.hud-left { position: absolute; top: 56px; left: 12px; bottom: 150px; width: min(360px, 25vw); display: flex; flex-direction: column; gap: 8px; }
 .mind { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 10px; }
 .mind-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 2px solid; padding-bottom: 6px; }
 .mind-model { font-size: 12px; }

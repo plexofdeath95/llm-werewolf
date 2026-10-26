@@ -6,8 +6,8 @@ import { HOUSE_R } from '../scene/House'
 export const insets = { left: 0, right: 0, top: 0, bottom: 0 } // px covered by the HUD
 
 export const DAY_RING = 4.6 // seats + name tags
-export const NIGHT_RING = HOUSE_R + 0.75 // cottages behind the seats
-const HEIGHTS = [0, 1.8] // floor and heads
+export const NIGHT_RING = HOUSE_R + 0.6 // cottages behind the seats
+const HEIGHTS = [0, 1.6] // floor and heads
 const SAMPLES = 24
 
 export interface Framing { distance: number; lookZ: number }

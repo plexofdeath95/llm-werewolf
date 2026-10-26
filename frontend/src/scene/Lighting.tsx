@@ -5,7 +5,7 @@ import { useRef } from 'react'
 import * as THREE from 'three'
 
 const DAY = { bg: '#2a1d14', fog: '#2a1d14', sun: '#ffd7a1', sunI: 1.6, amb: 0.55, hemi: '#ffe9c9' }
-const NIGHT = { bg: '#070b1d', fog: '#0a1230', sun: '#7f9dff', sunI: 0.55, amb: 0.18, hemi: '#5a6fb0' }
+const NIGHT = { bg: '#070b1d', fog: '#0a1230', sun: '#9fb6ff', sunI: 0.9, amb: 0.42, hemi: '#7b8fd0' }
 
 const tmp = new THREE.Color()
 
@@ -15,7 +15,7 @@ export function Lighting({ night }: { night: boolean }) {
   const amb = useRef<THREE.AmbientLight>(null)
   const hemi = useRef<THREE.HemisphereLight>(null)
 
-  useFrame((_, dt) => {
+  useFrame(({ camera }, dt) => {
     const t = night ? NIGHT : DAY
     const k = Math.min(1, dt * 1.6)
     if (!(scene.background instanceof THREE.Color)) scene.background = new THREE.Color(t.bg)
@@ -23,7 +23,9 @@ export function Lighting({ night }: { night: boolean }) {
     if (!scene.fog) scene.fog = new THREE.Fog(t.fog, 9, 26)
     const fog = scene.fog as THREE.Fog
     fog.color.lerp(tmp.set(t.fog), k)
-    fog.near += ((night ? 7 : 11) - fog.near) * k
+    const cd = camera.position.length() // fog starts behind the table, wherever the camera is
+    fog.near += (cd + (night ? 1 : 4) - fog.near) * k
+    fog.far += (cd + (night ? 14 : 20) - fog.far) * k
     if (sun.current) {
       sun.current.color.lerp(tmp.set(t.sun), k)
       sun.current.intensity += (t.sunI - sun.current.intensity) * k

@@ -6,7 +6,7 @@ import * as THREE from 'three'
 import type { Walk } from '../hooks/useNightWalks'
 import { SEAT_RADIUS, seatAngle, seatFacing, seatPosition } from '../lib/seats'
 
-const DOOR_R = 4.3 // just in front of the cottage (scene/House.tsx)
+const DOOR_R = 4.05 // just in front of the cottage (scene/House.tsx)
 const WATCH_OFFSET = 0.24 // radians beside the door: "a few steps away"
 const ease = (k: number) => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2)
 
@@ -39,8 +39,18 @@ export function Walker({ seat, count, walk, children }: {
     const heading = outward + (t < walk.out ? -1 : 1) * Math.sign(d || 1) * (Math.PI / 2)
     grp.rotation.y = k >= 0.999 ? outward : moving ? heading : seatFacing(seat, count)
   })
+  const lit = !!walk && walk.movement !== 'none'
   return (
     <group ref={g} position={home} rotation={[0, seatFacing(seat, count), 0]}>
+      {lit && (
+        <>
+          <pointLight position={[0, 2.6, 0.6]} intensity={9} distance={5.5} decay={1.6} color="#ffe2b0" />
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
+            <circleGeometry args={[0.75, 32]} />
+            <meshBasicMaterial color="#ffd27a" transparent opacity={0.45} />
+          </mesh>
+        </>
+      )}
       {children}
     </group>
   )
