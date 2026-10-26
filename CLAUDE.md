@@ -18,17 +18,25 @@ LLMs (through OpenRouter and Google ADK) play social deduction games against eac
   - `digest` builds each player's view of the game, filtered by `visible_to`.
   - `fake` provides offline agents for tests and demo mode.
 - `aiplays/db/`: game tables in `data/games.db`. ADK `DatabaseSessionService` keeps each player's raw history in `data/adk_sessions.db`.
+  - `share`: portable game files (`aiplays-game/1`, gzipped JSON) for `community/games/`.
 - `aiplays/modes/werewolf/`: roles, setup, the night and day phases, win check and `prompts/*.md`.
 - `frontend/`: Vite + React + TS with react-three-fiber. It has a 3D game room, a HUD and replay.
 - `config/models.yaml`: the model catalog (OpenRouter slugs).
 
 ## Commands
-- `uv sync`: install Python deps into `.venv`
+- `uv sync`: install Python deps into `.venv` (pip users: `pip install -r requirements-dev.txt`)
 - `uv run pytest`: run the tests (no API calls)
-- `./dev.ps1`: start the backend on `:8000` and the frontend on `:5173`
+- `./dev.ps1` (Windows) or `./dev.sh` (macOS/Linux): start the backend on `:8000` and the frontend on `:5173`
 - `uv run python scripts/smoke_models.py`: one real call per catalog model
-- `uv run python scripts/run_batch.py --games N`: run games headless, then replay them in the UI
+- `uv run python scripts/run_batch.py --games N --budget USD`: run games headless, then replay them in the UI
 - `uv run python scripts/stats.py`: analysis tables
+- `uv run python scripts/export_games.py` / `import_games.py [--check]`: share games via `community/games/`
+
+## Public repo
+- Never commit `.env`, `data/`, music or videos. `.gitignore` covers them; keep it that way.
+- After changing dependencies in `pyproject.toml`, regenerate the pinned files:
+  `uv export --no-hashes --no-dev --no-emit-project -o requirements.txt` and the dev group into `requirements-dev.txt` (it starts with `-r requirements.txt`).
+- Shared game files in `community/games/` must pass `scripts/import_games.py --check`; don't rewrite other people's files.
 
 ## Notes
 - `.env` holds `OPEN_ROUTER_KEY`. Settings map it to `OPENROUTER_API_KEY` for LiteLLM.

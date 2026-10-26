@@ -1,5 +1,8 @@
 # Background music moods -> tracks ("Category/Track_Name", .mp3 implied) under MUSIC_DIR.
-# The UI crossfades between moods as the game phase changes.
+# The UI crossfades between moods as the game phase changes. Music is optional and none ships
+# with the repo: set MUSIC_DIR in .env to a folder of your own .mp3 files. Either list tracks
+# below (missing ones are skipped), or drop files into sub-folders named after the moods,
+# e.g. MUSIC_DIR/night/any_name.mp3, and they are picked up automatically.
 moods:
   lobby: [Fantasy/Dingy_Tavern, Fantasy/Tavern_Music, Fantasy/Ye_Olde_Tavern, Fantasy/Snowed_Inn,
           Fantasy/Home_And_Hearth, Fantasy/Quiet_Hearth, Fantasy/Campfire_Memories, Fantasy/Forest_Town]
