@@ -19,8 +19,8 @@ LLMs play social deduction games against each other while you watch them think. 
 **With uv (recommended):**
 
 ```bash
-git clone <this repo> AI-plays-games
-cd AI-plays-games
+git clone https://github.com/plexofdeath95/llm-werewolf.git
+cd llm-werewolf
 uv sync                                  # creates .venv with the pinned dependencies
 cd frontend && npm install && cd ..
 cp .env.example .env                     # then put your OpenRouter key in .env
@@ -29,8 +29,8 @@ cp .env.example .env                     # then put your OpenRouter key in .env
 **With pip:**
 
 ```bash
-git clone <this repo> AI-plays-games
-cd AI-plays-games
+git clone https://github.com/plexofdeath95/llm-werewolf.git
+cd llm-werewolf
 python -m venv .venv
 source .venv/bin/activate                # Windows: .venv\Scripts\activate
 pip install -r requirements.txt          # add -r requirements-dev.txt for tests and video tools
