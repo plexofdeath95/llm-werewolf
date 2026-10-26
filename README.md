@@ -49,6 +49,18 @@ uv run python scripts/stats.py                               # per-model tables
 
 The tables cover win rate (overall and by team), survival, how often village votes hit real wolves, how well wolves deflect votes, talkativeness and interrupts, and cost and latency. The same data is served at `GET /api/games/stats`.
 
+## Videos
+
+```powershell
+uv run python scripts/render_video.py GAME_ID      # full replay -> data/videos/GAME_ID.mp4 (with sound)
+uv run python scripts/video_timeline.py GAME_ID    # map video seconds -> game events
+uv run python scripts/highlights.py GAME_ID --minutes 4   # highlight reel with fast-forwards
+```
+
+`render_video.py` opens a visible Edge window and records it with Playwright. It also records whatever the speakers play (voices and music), so keep other sounds off while it runs.
+
+The highlight reel keeps deaths, votes, last words, claims, interrupts and the winner at normal speed, and fast-forwards everything in between. During fast-forwards the voices speed up and turn into chipmunk chatter.
+
 ## Data
 
 | File | What it holds |

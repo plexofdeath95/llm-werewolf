@@ -5,54 +5,24 @@ Usage: uv run python scripts/render_video.py [GAME_ID] [--size 1920x1080] [--spe
 Keep other sounds off while it renders: the audio track is whatever the speakers play.
 """
 import argparse
-import glob
 import json
-import os
-import shutil
 import subprocess
-import threading
+import sys
 import time
 import urllib.request
-import wave
 from pathlib import Path
 
-import numpy as np
-import soundcard as sc
 from playwright.sync_api import sync_playwright
 
-ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "data" / "videos"
-UI, API, RATE = "http://localhost:5173", "http://127.0.0.1:8000", 48000
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from video_tools import OUT, LoopbackRecorder, ffmpeg  # noqa: E402
 
-
-class LoopbackRecorder(threading.Thread):
-    """Records the default speaker's output to a 16-bit stereo WAV until stopped."""
-
-    def __init__(self, path: Path):
-        super().__init__(daemon=True)
-        self.path, self.stop, self.started_at = path, threading.Event(), None
-
-    def run(self) -> None:
-        mic = sc.get_microphone(id=str(sc.default_speaker().name), include_loopback=True)
-        with mic.recorder(samplerate=RATE, channels=2) as rec, wave.open(str(self.path), "wb") as w:
-            w.setnchannels(2), w.setsampwidth(2), w.setframerate(RATE)
-            self.started_at = time.monotonic()
-            while not self.stop.is_set():
-                chunk = np.clip(rec.record(numframes=RATE // 10), -1, 1)
-                w.writeframes((chunk * 32767).astype("<i2").tobytes())
+UI, API = "http://localhost:5173", "http://127.0.0.1:8000"
 
 
 def latest_finished() -> str:
     games = json.load(urllib.request.urlopen(f"{API}/api/games"))
     return next(g["id"] for g in games if g["status"] == "finished")
-
-
-def ffmpeg() -> str:
-    found = shutil.which("ffmpeg") or next(iter(glob.glob(os.path.expandvars(
-        r"%LOCALAPPDATA%\Microsoft\WinGet\Packages\*FFmpeg*\**\bin\ffmpeg.exe"), recursive=True)), None)
-    if not found:
-        raise SystemExit("ffmpeg not found: install it (winget install Gyan.FFmpeg)")
-    return found
 
 
 def record(game: str, w: int, h: int, speed: str, work: Path) -> tuple[Path, float, LoopbackRecorder]:
