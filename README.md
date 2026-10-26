@@ -1,243 +1,46 @@
 # LLM Werewolf 🐺
 
-LLMs play social deduction games against each other while you watch them think. Werewolf comes first, with all 80 roles from the [WikiWolf](http://wikiwolf.wikidot.com/) list. Every model runs through OpenRouter as a Google ADK agent. A deterministic moderator runs the game, every game is saved for replay and benchmarking, and the web UI shows the table in a 3D tavern.
+LLMs play Werewolf against each other in a 3D tavern, and you can read every player's private thoughts as the game goes. It has all 80 [WikiWolf](http://wikiwolf.wikidot.com/) roles, runs any model on OpenRouter, and saves every game for replay.
 
-<p align="center">
-  <img src="docs/media/day.jpg" alt="Day 1 in the 3D tavern: Dave, played by GPT-6.1, claims Seer and accuses Alice. The case board, Erin's private thoughts and the game log are open." width="100%">
-</p>
+![A day in the tavern: one player claims Seer while another's private thoughts are open on the left](docs/media/day.jpg)
 
-- **See every mind.** Each player writes a private thought before it speaks, and you can read all of them live or in replay.
-- **Natural turn-taking.** After every line, all players react at once and the most urgent one gets the floor, so interruptions happen.
-- **Benchmarks.** Win rates, how often villagers suspect the real wolves, honesty of role claims, talk style and cost per model.
-- **Share games.** Export your games as small files and import other people's from [`community/`](community/README.md).
+## Run it
 
-| Night: players walk to each other's homes | Day: an interruption, in cave-man speech |
-|---|---|
-| <img src="docs/media/night-walks.gif" alt="Night 2: Carol, Erin and Grace walk to Dave's house while the captions describe each visit" width="100%"> | <img src="docs/media/interrupt.jpg" alt="Day 3: Heidi, secretly a wolf, interrupts with a fake Coward claim while her private thoughts show in the side panel" width="100%"> |
-
-## From the table
-
-Every line below is real, copied from the game logs.
-
-> “Me no Alpha. Me just fool.”
-> — DeepSeek, the Alpha, in its last words
-
-> “Heidi turned on me publicly to survive — smart wolf move, honestly.”
-> — DeepSeek, privately, as its own packmate votes it out
-
-> “Bob is helping my credibility, which isn’t what I want…”
-> — GPT-6.1, the Jester, who wins by getting voted out
-
-> “NO SHE DIDN’T! Look at the transcript…”
-> — Gemini 4 Argon, catching another player misquoting the log
-
-> “Me trap Dave home. Trap kill Frank, doctor. … Me sorry.”
-> — Claude Sonnet 5.5, whose trap killed its own Doctor
-
-> “Dave is fine as a target, I sit next to him but whatever.”
-> — Claude Sonnet 5.5, plotting a night kill
-
-> “Hey Heidi! Who are you thinking of attacking tonight?”
-> — Gemini 4 Argon, the Spy, in the wolf den
-
-> “Me Turncoat. Grace clue crush me bluff.”
-> — GPT-6.1, in its last words
-
-## What we found
-
-From our first 18 games. It's a small sample, so treat these as patterns, not rankings.
-
-<img src="docs/media/wolf-reads.svg" alt="Bar chart: when a villager named a prime suspect, it was a real wolf 74% of the time for Kimi, 60% for GPT-6.1, 53% for DeepSeek, 52% for Grok, 39% for Claude Sonnet and 34% for Claude Haiku, against 31% for a random pick" width="100%">
-
-<img src="docs/media/honesty.svg" alt="Unit chart: as villagers the models made 73 role claims and 71 were true; the only two lies were Grok, the real Doctor, hiding as the Coward. As wolves they made 29 claims and every one was a bluff." width="100%">
-
-<img src="docs/media/suspicion-heatmap.svg" alt="Heat map of game 3f2c: on day 1 the table splits between Alice, the Alpha, and Dave, the Seer. On day 2 everyone turns on Frank, an innocent Villager. On day 3 suspicion moves from Bob to Heidi, the real wolf, who nobody suspected for the first two days." width="100%">
-
-<p align="center">
-  <img src="docs/media/game-over.jpg" alt="Game over: the village wins. The summary lists each player's model, secret role and fate." width="70%">
-</p>
-
-## Requirements
-
-- Python 3.12 or newer
-- Node.js 22 LTS (20.19 or newer works)
-- An [OpenRouter API key](https://openrouter.ai/keys) for real games. Demo mode needs no key.
-- Optional: [uv](https://docs.astral.sh/uv/) (recommended), your own `.mp3` files for music, and ffmpeg plus Microsoft Edge for rendering videos.
-
-## Install
-
-**With uv (recommended):**
+You need Python 3.12+, Node 22 and an [OpenRouter key](https://openrouter.ai/keys). Demo mode works without a key.
 
 ```bash
 git clone https://github.com/plexofdeath95/llm-werewolf.git
 cd llm-werewolf
-uv sync                                  # creates .venv with the pinned dependencies
+uv sync                          # or make a venv and: pip install -r requirements.txt
 cd frontend && npm install && cd ..
-cp .env.example .env                     # then put your OpenRouter key in .env
+cp .env.example .env             # put your OpenRouter key in it
+./dev.sh                         # Windows: ./dev.ps1
 ```
 
-**With pip:**
-
-```bash
-git clone https://github.com/plexofdeath95/llm-werewolf.git
-cd llm-werewolf
-python -m venv .venv
-source .venv/bin/activate                # Windows: .venv\Scripts\activate
-pip install -r requirements.txt          # add -r requirements-dev.txt for tests and video tools
-cd frontend && npm install && cd ..
-cp .env.example .env                     # Windows: copy .env.example .env
-```
-
-The commands below use `uv run python`. With pip, activate the venv and use plain `python` instead.
-
-## Run
-
-```bash
-./dev.sh          # macOS / Linux
-./dev.ps1         # Windows (PowerShell)
-```
-
-This starts the API on `:8000` and the UI on http://localhost:5173.
-
-In the lobby, pick a player count and click **auto-fill**. It seats as many different models as it can before repeating any. Pick a deck and a speech style, then press **Start**. **Demo mode** runs scripted fake players with no API calls, which is handy for trying the UI.
-
-To check your key and models before a real game, make one cheap call per model:
-
-```bash
-uv run python scripts/smoke_models.py
-```
+Open http://localhost:5173, click **auto-fill**, then **Start**. Turn on **Demo mode** to try it with scripted players and no API calls.
 
 ## What it costs
 
-Real numbers from our 14 finished games (13 with 8 players), using the per-call cost OpenRouter reported in October 2026 and this project's default reasoning caps. Demo mode is free.
+From 14 finished games at OpenRouter's October 2026 prices, a typical 8-player game costs about **$1.70** (anywhere from $0.53 to $5.02), makes about 250 LLM calls and takes about 7 minutes. The bill is the sum of the seats:
 
-| Per game | Typical (median) | Range |
-|---|---|---|
-| API cost | $1.70 | $0.53 to $5.02 |
-| LLM calls | 250 | 132 to 450 |
-| Time | 7 min | 3 to 32 min |
-
-The bill is the sum of the seats, and the models differ a lot:
-
-| Model | One seat for a whole game | Per 1,000 calls | Median time per call |
-|---|---|---|---|
-| Claude Sonnet 5.5 | $1.06 | $36.59 | 2.1 s |
-| Grok 4.7 | $0.35 | $10.33 | 2.2 s |
-| Kimi K3.1 Pro | $0.22 | $8.40 | 8.1 s |
-| GPT-6.1 Sol | $0.14 | $4.32 | 3.8 s |
-| Claude Haiku 5.5 | $0.06 | $1.81 | 1.8 s |
-| DeepSeek V4.1 Flash | $0.01 | $0.46 | 5.8 s |
-
-<img src="docs/media/cost-per-seat.svg" alt="Bar chart of the cost of one seat per game: Claude Sonnet $1.06, Grok $0.35, Kimi $0.22, GPT-6.1 $0.14, Claude Haiku $0.06, DeepSeek $0.01" width="100%">
-
-So a table with one of each model costs about $1.86 a game before repeats, eight Claude Haiku seats about $0.50, and eight DeepSeek seats about $0.10. Ways to keep spending in check:
-- **Per game:** each game pauses itself at its cost cap (`max_cost_usd`, $10 by default), and you can resume it from the UI.
-- **Per batch:** `scripts/run_batch.py --budget 20` stops starting new games once $20 is committed.
-- **Per model:** set `enabled: false` on expensive models in `config/models.yaml`, or lower the discussion rounds in the lobby.
-
-Prices change, so check [OpenRouter's model pages](https://openrouter.ai/models) for current rates.
-
-## How a game works
-
-1. **Night.** Private channels (wolf den, masons, lovers, the cult) talk first. Then every player with a night ability picks an action, all at the same time. The engine resolves the night in WikiWolf priority order: role-block → protection → manipulation → information → role-copy → support → killing.
-   - Moving abilities either *visit* a home or *travel* to it, and some roles react to visitors.
-   - Each player gets private results at dawn.
-2. **Day.** Players discuss with *parallel-react* turn-taking.
-   - After every message, all living players react privately at the same time with a thought, an urgency from 0 to 10, a prime suspect and a draft line.
-   - The scheduler gives the floor to the most urgent player. Being named earns a bonus, players who have not spoken yet are preferred, and there's some jitter.
-   - A named player who reacts with high urgency is shown as an **interruption**.
-   - Discussion ends after a set number of rounds, and everyone gets heard at least once.
-3. **Vote.** Everyone votes simultaneously, and the plurality is eliminated (a tie means nobody). Votes can be modified by roles: the Mayor can stuff the ballot or pardon, and the Hypnotist can copy a player's vote. Lynch triggers also run here (Knight, Jester, Executioner…).
-
-Players never get the rules second-hand. Every briefing includes the full rules plus a card for each role in the deck, generated from the same definitions the engine enforces.
-
-## Watching them think
-
-- **Inner monologue.** Every reply has a `thought` field, streamed live. Click a player to read their full log.
-- **Native reasoning.** When the provider exposes it (Grok, Kimi and DeepSeek do today), it appears in the Mind panel.
-- **Per-call details.** Cost, latency and token use are recorded for every call.
-- **Replay.** Every game can be replayed from History with seek and speed controls.
-
-## Benchmarks and batches
-
-```bash
-uv run python scripts/run_batch.py --games 10 --budget 20 --speech caveman   # headless games, $20 cap in total
-uv run python scripts/stats.py                                               # per-model tables
-```
-
-Batch games shuffle the seats and give every enabled model a seat before repeating any. The tables cover win rate (overall and by team), survival, how often village votes hit real wolves, how well wolves deflect votes, talkativeness and interrupts, and cost and latency. The same data is served at `GET /api/games/stats`.
-
-## Share your games
-
-```bash
-uv run python scripts/export_games.py          # your finished games -> community/games/<id>.json.gz
-uv run python scripts/import_games.py          # everything in community/games/ -> your local DB
-```
-
-Imported games show up in History for replay and count in `stats.py`. To add your games to the shared set, see [community/README.md](community/README.md).
-
-## Videos (optional)
-
-```bash
-uv run python scripts/render_video.py GAME_ID      # full replay -> data/videos/GAME_ID.mp4 (with sound)
-uv run python scripts/video_timeline.py GAME_ID    # map video seconds -> game events
-uv run python scripts/highlights.py GAME_ID --minutes 4   # highlight reel with fast-forwards
-```
-
-These need the dev requirements, ffmpeg on your PATH, and Microsoft Edge (`uv run playwright install ffmpeg` once). They have only been tested on Windows. `render_video.py` opens a visible Edge window and records whatever the speakers play, so keep other sounds off while it runs. The highlight reel keeps deaths, votes, last words and the winner at normal speed and fast-forwards everything in between, with chipmunk voices.
-
-## Music (optional)
-
-No music ships with the repo. Set `MUSIC_DIR` in `.env` to a folder of your own `.mp3` files, then either list tracks per mood in `config/music.yaml` or drop files into sub-folders named after the moods (`lobby`, `day`, `night`, `vote`, `dawn`, `village_wins`, `wolves_wins`, `neutral_wins`).
-
-## Configuration
-
-| File | What it controls |
+| Model | One seat, one game |
 |---|---|
-| `.env` | Your OpenRouter key, plus optional `MUSIC_DIR` |
-| `config/models.yaml` | The model catalog: any OpenRouter slug, its colour, tier, and whether it is enabled |
-| `config/personas.yaml` | Optional character prompts you can give a seat |
-| `config/speech_styles.yaml` | Speech styles for spoken lines (cave-man, pirate, noir, Shakespeare) |
-| `config/music.yaml` | Background music per mood |
+| Claude Sonnet 5.5 | $1.06 |
+| Grok 4.7 | $0.35 |
+| Kimi K3.1 Pro | $0.22 |
+| GPT-6.1 Sol | $0.14 |
+| Claude Haiku 5.5 | $0.06 |
+| DeepSeek V4.1 Flash | $0.01 |
 
-## Data
+Each game pauses at a $10 cap by default. To skip a pricey model, set `enabled: false` on it in `config/models.yaml`.
 
-| File | What it holds |
-|---|---|
-| `data/games.db` | Games, players, every event (speech, reactions, votes, night actions, thoughts, costs). Schema managed by **Alembic**. |
-| `data/adk_sessions.db` | Each player's raw LLM conversation, kept by ADK's `DatabaseSessionService`. |
-| `community/games/` | Shared game files (see above). |
+## Extras
 
-`data/` is created on first run and is not committed. To change the schema, edit `aiplays/db/tables.py`, run `uv run alembic revision --autogenerate -m "..."`, and commit the migration. The app applies migrations on startup.
+- `uv run python scripts/run_batch.py --games 5 --budget 10` plays games headless; replay them later from History.
+- `uv run python scripts/stats.py` prints per-model tables: wins, wolf-spotting, honesty, talk style and cost.
+- `scripts/export_games.py` and `scripts/import_games.py` share games through [community/](community/README.md).
+- Set `MUSIC_DIR` in `.env` to a folder of your own mp3s for background music (see `config/music.yaml`).
 
-## Layout
+Contributions are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md). MIT licensed.
 
-```
-aiplays/core/        game-agnostic engine: events, bus, moderator, conversation, scheduler, voting, session
-aiplays/agents/      ADK PlayerAgent (LiteLlm → OpenRouter), prompts, digest, schemas, fake agents
-aiplays/modes/werewolf/   roles/ (80 roles in small files), night/, day/, deck, rules, win
-aiplays/db/          tables, repo, stats, share (game files), Alembic runner
-frontend/            Vite + React + react-three-fiber game room, HUD, lobby, history/replay
-config/              models, personas, speech styles, music
-community/           shared game files
-scripts/             smoke test, batches, stats, export/import, videos
-```
-
-New game modes such as Blood on the Clocktower go in `aiplays/modes/<mode>/` and reuse everything else.
-
-## Tests
-
-`uv run pytest` runs entirely offline:
-- role-by-role night-resolution tests
-- prompt rendering for all 80 roles
-- full fake games that check engine invariants
-- game file export and import
-- the 100-line rule
-
-## Contributing
-
-Contributions are welcome: new roles, game modes, models, analysis and shared games. Read [CONTRIBUTING.md](CONTRIBUTING.md) first. The project rules, including at most 100 lines per file, are in [CLAUDE.md](CLAUDE.md).
-
-## License
-
-[MIT](LICENSE)
+Have fun. 🐺
