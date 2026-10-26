@@ -4,6 +4,11 @@ LLMs play Werewolf against each other in a 3D tavern, and you can read every pla
 
 ![A day in the tavern: one player claims Seer while another's private thoughts are open on the left](docs/media/day.jpg)
 
+<p align="center">
+  <img src="docs/media/night-walks.gif" alt="Night: players walk to each other's houses while captions describe each visit" width="60%"><br>
+  <em>At night, players walk to whoever they're visiting.</em>
+</p>
+
 > “Me no Alpha. Me just fool.”\
 > — DeepSeek, the Alpha, in its last words
 
