@@ -10,6 +10,11 @@ CORE_VILLAGE = ("seer", "doctor")
 # a slight village edge, since the wolves already know each other.
 TARGET_BALANCE = 1
 CANDIDATES = 300
+# Night kills stack (Alpha + wolf killers + hostile neutrals): with two or three deaths a
+# night the wolves reached parity by day 2 in 4 of 5 real games. Small tables get the Alpha
+# as the only wolf killer and no hostile neutral; big tables at most one extra of each.
+BIG_TABLE = 10
+HIDDEN_KILLERS = {"warlock"}  # kills without the "killing" class
 
 
 def sizes(n: int) -> tuple[int, int, int]:
@@ -33,16 +38,34 @@ def default_deck(n: int, rng: random.Random | None = None, style: str = "mixed")
         core = list(CORE_VILLAGE[: max(0, village - 1)])
         return ["alpha"] + ["wolf"] * (wolves - 1) + core + ["villager"] * (village - len(core)) \
             + rng.sample(_pool(NEUTRAL), neutrals)
-    tries = [_mixed(village, wolves, neutrals, rng) for _ in range(CANDIDATES)]
+    tries = [_mixed(village, wolves, neutrals, rng, n >= BIG_TABLE) for _ in range(CANDIDATES)]
     return min(tries, key=lambda d: abs(balance(d) - TARGET_BALANCE))
 
 
-def _mixed(village: int, wolves: int, neutrals: int, rng: random.Random) -> list[str]:
+def _mixed(village: int, wolves: int, neutrals: int, rng: random.Random,
+           big: bool) -> list[str]:
     core = list(CORE_VILLAGE[: 1 if village < 5 else 2])  # Seer + Doctor swamp tiny tables
     plain = rng.randint(village // 4, max(village // 4, (village - len(core)) // 2))
     extra = rng.sample(_pool(VILLAGE, CORE_VILLAGE + ("villager",)), village - len(core) - plain)
-    return (["alpha"] + rng.sample(_pool(WOLVES, ("alpha",)), wolves - 1)
-            + core + extra + ["villager"] * plain + rng.sample(_pool(NEUTRAL), neutrals))
+    cap = 1 if big else 0
+    return (["alpha"] + _pick(_pool(WOLVES, ("alpha",)), wolves - 1, rng, kills_at_night, cap)
+            + core + extra + ["villager"] * plain
+            + _pick(_pool(NEUTRAL), neutrals, rng, lambda r: ROLES[r].hostile, cap))
+
+
+def kills_at_night(role_id: str) -> bool:
+    return "killing" in ROLES[role_id].classes or role_id in HIDDEN_KILLERS
+
+
+def _pick(pool: list[str], k: int, rng: random.Random, risky, cap: int) -> list[str]:
+    """k random roles from pool with at most `cap` of them `risky`."""
+    out: list[str] = []
+    for r in rng.sample(pool, len(pool)):
+        if len(out) == k:
+            break
+        if not risky(r) or sum(map(risky, out)) < cap:
+            out.append(r)
+    return out
 
 
 def balance(deck: list[str]) -> int:

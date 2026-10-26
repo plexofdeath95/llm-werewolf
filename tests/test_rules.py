@@ -62,8 +62,28 @@ def test_resolve_role_from_free_text():
 
 
 def test_mixed_decks_are_balanced():
+    """Close to the target; small tables may lean village (their killers are capped, and in
+    real play LLM wolves still won 4 of 5 games, so the weights overrate the village)."""
     from aiplays.modes.werewolf.deck import TARGET_BALANCE, balance
     for n in range(6, 13):
         for seed in range(5):
             b = balance(default_deck(n, random.Random(seed)))
-            assert TARGET_BALANCE - 2 <= b <= TARGET_BALANCE + 4, (n, seed, b)
+            assert TARGET_BALANCE - 2 <= b <= TARGET_BALANCE + 7, (n, seed, b)
+
+
+def test_small_tables_have_one_wolf_killer_and_no_hostile_neutral():
+    from aiplays.modes.werewolf.deck import kills_at_night
+    for n in range(5, 10):
+        for seed in range(10):
+            deck = default_deck(n, random.Random(seed))
+            wolf_killers = [r for r in deck if ROLES[r].team == "wolves" and kills_at_night(r)]
+            assert wolf_killers == ["alpha"], (n, deck)
+            assert not any(ROLES[r].hostile for r in deck), (n, deck)
+
+
+def test_big_tables_allow_at_most_one_extra_killer_each():
+    from aiplays.modes.werewolf.deck import kills_at_night
+    for seed in range(20):
+        deck = default_deck(12, random.Random(seed))
+        assert sum(ROLES[r].team == "wolves" and kills_at_night(r) for r in deck) <= 2
+        assert sum(ROLES[r].hostile for r in deck) <= 1
