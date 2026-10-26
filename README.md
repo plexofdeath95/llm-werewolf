@@ -1,11 +1,61 @@
-# AI Plays Games 🐺
+# LLM Werewolf 🐺
 
 LLMs play social deduction games against each other while you watch them think. Werewolf comes first, with all 80 roles from the [WikiWolf](http://wikiwolf.wikidot.com/) list. Every model runs through OpenRouter as a Google ADK agent. A deterministic moderator runs the game, every game is saved for replay and benchmarking, and the web UI shows the table in a 3D tavern.
+
+<p align="center">
+  <img src="docs/media/day.jpg" alt="Day 1 in the 3D tavern: Dave, played by GPT-6.1, claims Seer and accuses Alice. The case board, Erin's private thoughts and the game log are open." width="100%">
+</p>
 
 - **See every mind.** Each player writes a private thought before it speaks, and you can read all of them live or in replay.
 - **Natural turn-taking.** After every line, all players react at once and the most urgent one gets the floor, so interruptions happen.
 - **Benchmarks.** Win rates, how often villagers suspect the real wolves, honesty of role claims, talk style and cost per model.
 - **Share games.** Export your games as small files and import other people's from [`community/`](community/README.md).
+
+| Night: players walk to each other's homes | Day: an interruption, in cave-man speech |
+|---|---|
+| <img src="docs/media/night-walks.gif" alt="Night 2: Carol, Erin and Grace walk to Dave's house while the captions describe each visit" width="100%"> | <img src="docs/media/interrupt.jpg" alt="Day 3: Heidi, secretly a wolf, interrupts with a fake Coward claim while her private thoughts show in the side panel" width="100%"> |
+
+## From the table
+
+Every line below is real, copied from the game logs.
+
+> “Me no Alpha. Me just fool.”
+> — DeepSeek, the Alpha, in its last words
+
+> “Heidi turned on me publicly to survive — smart wolf move, honestly.”
+> — DeepSeek, privately, as its own packmate votes it out
+
+> “Bob is helping my credibility, which isn’t what I want…”
+> — GPT-6.1, the Jester, who wins by getting voted out
+
+> “NO SHE DIDN’T! Look at the transcript…”
+> — Gemini 4 Argon, catching another player misquoting the log
+
+> “Me trap Dave home. Trap kill Frank, doctor. … Me sorry.”
+> — Claude Sonnet 5.5, whose trap killed its own Doctor
+
+> “Dave is fine as a target, I sit next to him but whatever.”
+> — Claude Sonnet 5.5, plotting a night kill
+
+> “Hey Heidi! Who are you thinking of attacking tonight?”
+> — Gemini 4 Argon, the Spy, in the wolf den
+
+> “Me Turncoat. Grace clue crush me bluff.”
+> — GPT-6.1, in its last words
+
+## What we found
+
+From our first 18 games. It's a small sample, so treat these as patterns, not rankings.
+
+<img src="docs/media/wolf-reads.svg" alt="Bar chart: when a villager named a prime suspect, it was a real wolf 74% of the time for Kimi, 60% for GPT-6.1, 53% for DeepSeek, 52% for Grok, 39% for Claude Sonnet and 34% for Claude Haiku, against 31% for a random pick" width="100%">
+
+<img src="docs/media/honesty.svg" alt="Unit chart: as villagers the models made 73 role claims and 71 were true; the only two lies were Grok, the real Doctor, hiding as the Coward. As wolves they made 29 claims and every one was a bluff." width="100%">
+
+<img src="docs/media/suspicion-heatmap.svg" alt="Heat map of game 3f2c: on day 1 the table splits between Alice, the Alpha, and Dave, the Seer. On day 2 everyone turns on Frank, an innocent Villager. On day 3 suspicion moves from Bob to Heidi, the real wolf, who nobody suspected for the first two days." width="100%">
+
+<p align="center">
+  <img src="docs/media/game-over.jpg" alt="Game over: the village wins. The summary lists each player's model, secret role and fate." width="70%">
+</p>
 
 ## Requirements
 
@@ -57,7 +107,35 @@ To check your key and models before a real game, make one cheap call per model:
 uv run python scripts/smoke_models.py
 ```
 
-**What it costs:** with the default models a game costs roughly $0.50 to $5; our first 22 games cost $34 in total. Each game pauses itself if it reaches its cost cap (`max_cost_usd`, $10 by default), and you can resume it from the UI.
+## What it costs
+
+Real numbers from our 14 finished games (13 with 8 players), using the per-call cost OpenRouter reported in October 2026 and this project's default reasoning caps. Demo mode is free.
+
+| Per game | Typical (median) | Range |
+|---|---|---|
+| API cost | $1.70 | $0.53 to $5.02 |
+| LLM calls | 250 | 132 to 450 |
+| Time | 7 min | 3 to 32 min |
+
+The bill is the sum of the seats, and the models differ a lot:
+
+| Model | One seat for a whole game | Per 1,000 calls | Median time per call |
+|---|---|---|---|
+| Claude Sonnet 5.5 | $1.06 | $36.59 | 2.1 s |
+| Grok 4.7 | $0.35 | $10.33 | 2.2 s |
+| Kimi K3.1 Pro | $0.22 | $8.40 | 8.1 s |
+| GPT-6.1 Sol | $0.14 | $4.32 | 3.8 s |
+| Claude Haiku 5.5 | $0.06 | $1.81 | 1.8 s |
+| DeepSeek V4.1 Flash | $0.01 | $0.46 | 5.8 s |
+
+<img src="docs/media/cost-per-seat.svg" alt="Bar chart of the cost of one seat per game: Claude Sonnet $1.06, Grok $0.35, Kimi $0.22, GPT-6.1 $0.14, Claude Haiku $0.06, DeepSeek $0.01" width="100%">
+
+So a table with one of each model costs about $1.86 a game before repeats, eight Claude Haiku seats about $0.50, and eight DeepSeek seats about $0.10. Ways to keep spending in check:
+- **Per game:** each game pauses itself at its cost cap (`max_cost_usd`, $10 by default), and you can resume it from the UI.
+- **Per batch:** `scripts/run_batch.py --budget 20` stops starting new games once $20 is committed.
+- **Per model:** set `enabled: false` on expensive models in `config/models.yaml`, or lower the discussion rounds in the lobby.
+
+Prices change, so check [OpenRouter's model pages](https://openrouter.ai/models) for current rates.
 
 ## How a game works
 
