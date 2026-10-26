@@ -8,12 +8,14 @@ Usage: uv run python scripts/highlights.py GAME_ID [--minutes 4]
 Needs data/videos/<id>.mp4 (render_video.py) and <id>/timeline.json (video_timeline.py).
 """
 import argparse
+import json
 import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from highlight_plan import FAST, GAP_MAX, SPEED, load, moments, plan  # noqa: E402
+from highlight_moments import load, moments  # noqa: E402
+from highlight_plan import FAST, GAP_MAX, SPEED, plan  # noqa: E402
 from video_tools import OUT, ffmpeg  # noqa: E402
 
 FONT = "C\\:/Windows/Fonts/arialbd.ttf"
@@ -56,7 +58,8 @@ def graph(segments: list[tuple[str, float, float]]) -> str:
 
 def main(a: argparse.Namespace) -> None:
     events, ts, revealed = load(a.game)
-    segments = plan(moments(events, ts, revealed), ts[-1], a.minutes * 60)
+    picks = set(json.loads(Path(a.picks).read_text("utf-8"))) if a.picks else set()
+    segments = plan(moments(events, ts, revealed, picks), ts[-1], a.minutes * 60)
     work = OUT / a.game
     script = work / "highlights.ffgraph"
     script.write_text(graph(segments), encoding="utf-8")
@@ -74,4 +77,5 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("game")
     ap.add_argument("--minutes", type=float, default=4.0)
+    ap.add_argument("--picks", default="", help="JSON list of hand-picked SPEECH seqs to keep")
     main(ap.parse_args())
