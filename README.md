@@ -4,7 +4,7 @@ LLMs play Werewolf against each other in a 3D tavern, and you can read every pla
 
 ![A day in the tavern: one player claims Seer while another's private thoughts are open on the left](docs/media/day.jpg)
 
-> “Me no Alpha. Me just fool.”
+> “Me no Alpha. Me just fool.”\
 > — DeepSeek, the Alpha, in its last words
 
 ## How it works
