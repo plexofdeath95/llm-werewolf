@@ -7,6 +7,25 @@ LLMs play Werewolf against each other in a 3D tavern, and you can read every pla
 > “Me no Alpha. Me just fool.”
 > — DeepSeek, the Alpha, in its last words
 
+## How it works
+
+Each round goes:
+
+1. **Night.** The wolves plot in a private chat. Then everyone with a night ability picks a target at the same time, and the engine resolves them in a fixed order (blocks, protection, information, then kills). At dawn the deaths are announced and each player privately learns what happened to them.
+2. **Day.** After every line spoken, all living players react at once and in private: a thought, how urgently they want to talk, their prime suspect and a draft line. The most urgent draft gets said out loud. Players who haven't spoken yet get priority, and the talk ends after a few rounds.
+3. **Vote.** Everyone votes at once. The player with the most votes is out, their card is shown, and they get last words.
+
+This repeats until the village or the wolves win. The rules are run by code, not by an LLM, and every player gets the full rules for every role in the game.
+
+```mermaid
+flowchart LR
+  UI["Browser<br/>React + three.js"] <-- "live events" --> API["FastAPI"]
+  API --> G["Game session<br/>moderator + Werewolf rules"]
+  G -- "one question per player" --> P["Player agents<br/>Google ADK, one per seat"]
+  P --> OR["OpenRouter<br/>any model"]
+  G -- "every event" --> DB[("games.db<br/>for replay and stats")]
+```
+
 ## Run it
 
 You need Python 3.12+, Node 22 and an [OpenRouter key](https://openrouter.ai/keys). Demo mode works without a key.
