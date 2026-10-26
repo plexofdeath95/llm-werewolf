@@ -97,7 +97,9 @@ Each game pauses at a $10 cap by default. To skip a pricey model, set `enabled: 
 ## Extras
 
 - `uv run python scripts/run_batch.py --games 5 --budget 10` plays games headless; replay them later from History.
-- `uv run python scripts/stats.py` prints per-model tables: wins, wolf-spotting, honesty, talk style and cost.
+- `uv run python scripts/stats.py` prints per-model tables: wins, vote accuracy, talk and cost.
+- `uv run python scripts/insights.py tables` goes deeper: how often each model's suspect was really a wolf, changes of mind, honesty of role claims, moods in private thoughts and more (`--csv DIR` saves them). `insights.py heat GAME_ID` draws who suspected whom after every line, and `insights.py quotes --kind last-words` digs out the best lines.
+- `uv run python scripts/charts.py` turns all of that into SVG charts in `data/charts/`.
 - `scripts/export_games.py` and `scripts/import_games.py` share games through [community/](community/README.md).
 - Set `MUSIC_DIR` in `.env` to a folder of your own mp3s for background music (see `config/music.yaml`).
 

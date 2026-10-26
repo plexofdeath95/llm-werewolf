@@ -22,6 +22,7 @@ LLMs (through OpenRouter and Google ADK) play social deduction games against eac
 - `aiplays/db/`: game tables in `data/games.db`. ADK `DatabaseSessionService` keeps each player's raw history in `data/adk_sessions.db`.
   - `share`: portable game files (`aiplays-game/1`, gzipped JSON) for `community/games/`.
 - `aiplays/modes/werewolf/`: roles, setup, the night and day phases, win check and `prompts/*.md`.
+  - `insights/`: analysis of stored games (suspicion accuracy, changes of mind, claims, moods, heat maps, quotes, SVG charts) used by `scripts/insights.py` and `scripts/charts.py`.
 - `frontend/`: Vite + React + TS with react-three-fiber. It has a 3D game room, a HUD and replay.
 - `config/models.yaml`: the model catalog (OpenRouter slugs).
 
@@ -31,7 +32,8 @@ LLMs (through OpenRouter and Google ADK) play social deduction games against eac
 - `./dev.ps1` (Windows) or `./dev.sh` (macOS/Linux): start the backend on `:8000` and the frontend on `:5173`
 - `uv run python scripts/smoke_models.py`: one real call per catalog model
 - `uv run python scripts/run_batch.py --games N --budget USD`: run games headless, then replay them in the UI
-- `uv run python scripts/stats.py`: analysis tables
+- `uv run python scripts/stats.py`: benchmark tables (wins, vote accuracy, talk, cost)
+- `uv run python scripts/insights.py tables|heat GAME|quotes` and `scripts/charts.py`: deeper Werewolf analysis and SVG charts
 - `uv run python scripts/export_games.py` / `import_games.py [--check]`: share games via `community/games/`
 
 ## Public repo
