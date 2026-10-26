@@ -19,7 +19,7 @@ This repeats until the village or the wolves win. The rules are run by code, not
 
 ```mermaid
 flowchart LR
-  UI["Browser<br/>React + three.js"] <-- "live events" --> API["FastAPI"]
+  UI["Browser<br/>React + three.js"] <-->|live events| API["FastAPI"]
   API --> G["Game session<br/>moderator + Werewolf rules"]
   G -- "one question per player" --> P["Player agents<br/>Google ADK, one per seat"]
   P --> OR["OpenRouter<br/>any model"]
