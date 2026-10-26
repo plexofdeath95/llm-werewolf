@@ -68,6 +68,16 @@ cp .env.example .env             # put your OpenRouter key in it
 
 Open http://localhost:5173, click **auto-fill**, then **Start**. Turn on **Demo mode** to try it with scripted players and no API calls.
 
+## Local models (Ollama)
+
+No key needed. Install [Ollama](https://ollama.com), pull a model, and start the app as above:
+
+```bash
+ollama pull qwen3:8b
+```
+
+Every model you've pulled shows up in the lobby as "(local)". Auto-fill uses only local models when there's no OpenRouter key, and you can also mix local and cloud models at one table. Local games are free but slower, and small models struggle with the rules: qwen3:8b runs a game without errors at about 7 seconds per answer on an RTX 5090, then opens with "Me wolf. Me kill Bob." Try bigger models if your GPU fits them.
+
 ## What it costs
 
 From 14 finished games at OpenRouter's October 2026 prices, a typical 8-player game costs about **$1.70** (anywhere from $0.53 to $5.02), makes about 250 LLM calls and takes about 7 minutes. The bill is the sum of the seats:
@@ -80,6 +90,7 @@ From 14 finished games at OpenRouter's October 2026 prices, a typical 8-player g
 | GPT-6.1 Sol | $0.14 |
 | Claude Haiku 5.5 | $0.06 |
 | DeepSeek V4.1 Flash | $0.01 |
+| Any local model (Ollama) | free |
 
 Each game pauses at a $10 cap by default. To skip a pricey model, set `enabled: false` on it in `config/models.yaml`.
 

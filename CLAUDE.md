@@ -15,6 +15,8 @@ LLMs (through OpenRouter and Google ADK) play social deduction games against eac
   - `conversation` + `scheduler`: parallel-react turn-taking.
   - `voting`, `session`, `gate`/`budget`: pause/step and the cost cap.
 - `aiplays/agents/`: one ADK `LlmAgent` per player, sending `LiteLlm("openrouter/<slug>")` calls through `PlayerAgent.ask(prompt, Schema)`.
+  - `models` builds the LiteLlm per catalog entry; `provider: ollama` entries go to `ollama_chat/<slug>` instead (JSON mode, thinking as an on/off switch, longer deadlines).
+  - `ollama` discovers models pulled into a running Ollama and adds them to the catalog as tier `local`.
   - `digest` builds each player's view of the game, filtered by `visible_to`.
   - `fake` provides offline agents for tests and demo mode.
 - `aiplays/db/`: game tables in `data/games.db`. ADK `DatabaseSessionService` keeps each player's raw history in `data/adk_sessions.db`.

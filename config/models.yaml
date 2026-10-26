@@ -1,6 +1,9 @@
 # Model catalog. slug = OpenRouter model id. tier: standard (~$2/M in) | economy.
 # reasoning_off: how reaction calls run without reasoning (disable, or minimal where the
 # endpoint makes reasoning mandatory).
+# Local models: anything pulled into a running Ollama is added automatically (tier: local).
+# To pin one here instead: {id: my-qwen, label: Qwen3 8B, slug: "qwen3:8b", provider: ollama,
+# tier: local, deadline_scale: 4}
 models:
   - {id: gpt-6.1-sol, label: GPT-6.1 Sol, slug: openai/gpt-6.1-sol, provider: openai, color: "#10a37f"}
   - {id: claude-sonnet-5.5, label: Claude Sonnet 5.5, slug: anthropic/claude-sonnet-5.5, provider: anthropic, color: "#d97757"}

@@ -47,15 +47,16 @@ class PlayerAgent:
         started, key = time.monotonic(), deep
         text = f"{prompt}\n\n{schema_hint(schema)}"
         reply: Reply[T] = Reply(value=None)
+        limit = DEADLINE[deep] * self.entry.deadline_scale
         async with self._sem:
             for attempt in range(ATTEMPTS):
                 self._agent.model = self._models[key]
                 try:
                     raw, thoughts, usage = await asyncio.wait_for(
                         run_turn(self._runner, *self._ids, text, on_delta, self.entry.stream),
-                        DEADLINE[deep])
+                        limit)
                 except TimeoutError:
-                    reply.error = f"no answer within {DEADLINE[deep]:.0f}s"
+                    reply.error = f"no answer within {limit:.0f}s"
                     break
                 # any provider failure (dropped stream, 5xx, rate limit) gets one more try
                 except Exception as e:  # noqa: BLE001

@@ -25,6 +25,10 @@ class ModelEntry(BaseModel):
     enabled: bool = True
     stream: bool = True  # SSE; Google models via OpenRouter stalled mid-stream
     reasoning_off: str = "minimal"  # how to turn reasoning off: minimal | disable
+    deadline_scale: float = 1.0  # multiplies the per-call deadline (local models are slower)
+
+
+TIERS = ("standard", "economy", "local")  # auto-fill order
 
 
 class Catalog(BaseModel):
@@ -39,9 +43,14 @@ class Catalog(BaseModel):
         raise KeyError(f"unknown model id: {model_id}")
 
     def roster(self, n: int | None = None) -> list[str]:
-        """n model ids: every unique model (standard tier first) before any repeats."""
+        """n model ids: every unique model (by tier) before any repeats. Without an OpenRouter
+        key only local (Ollama) models are seated, if there are any."""
         n = n or self.default_players
-        order = sorted((m for m in self.models if m.enabled), key=lambda m: m.tier != "standard")
+        enabled = [m for m in self.models if m.enabled]
+        cloud = bool(os.environ.get("OPENROUTER_API_KEY"))
+        usable = [m for m in enabled if cloud or m.provider == "ollama"] or enabled
+        rank = {t: i for i, t in enumerate(TIERS)}
+        order = sorted(usable, key=lambda m: rank.get(m.tier, len(TIERS)))
         return [order[i % len(order)].id for i in range(n)]
 
 
@@ -53,6 +62,7 @@ class Settings(BaseSettings):
     max_concurrency: int = 12
     catalog_file: Path = ROOT / "config" / "models.yaml"
     music_dir: Path | None = None  # licensed background music, served read-only
+    ollama_url: str = "http://localhost:11434"  # local models; empty = don't look for Ollama
 
 
 @lru_cache
@@ -67,8 +77,13 @@ def get_settings() -> Settings:
 
 @lru_cache
 def get_catalog() -> Catalog:
-    raw = yaml.safe_load(get_settings().catalog_file.read_text(encoding="utf-8"))
-    return Catalog(**raw)
+    s = get_settings()
+    cat = Catalog(**yaml.safe_load(s.catalog_file.read_text(encoding="utf-8")))
+    if s.ollama_url:  # every model pulled into a running Ollama joins the catalog
+        from aiplays.agents.ollama import discover
+        listed = {m.slug for m in cat.models if m.provider == "ollama"}
+        cat.models += [m for m in discover(s.ollama_url) if m.slug not in listed]
+    return cat
 
 
 @lru_cache

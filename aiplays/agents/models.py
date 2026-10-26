@@ -1,7 +1,11 @@
-"""Catalog entry -> ADK LiteLlm model routed through OpenRouter."""
+"""Catalog entry -> ADK LiteLlm model, routed through OpenRouter or a local Ollama."""
+import litellm
 from google.adk.models.lite_llm import LiteLlm
 
+from aiplays.agents import ollama
 from aiplays.settings import ModelEntry, get_settings
+
+litellm.suppress_debug_info = True  # no "Provider List" banner for models it can't price (local)
 
 OUTPUT_HEADROOM = 1200  # visible-answer tokens on top of the reasoning cap
 MIN_REASONING = {"anthropic": 1024}  # Anthropic skips thinking below its minimum budget
@@ -20,12 +24,16 @@ def reasoning_body(entry: ModelEntry, tokens: int | None) -> dict | None:
 
 
 def max_output(entry: ModelEntry, tokens: int | None) -> int:
+    if entry.provider == ollama.PROVIDER:  # thinking counts against Ollama's output limit
+        return (tokens or 0) + OUTPUT_HEADROOM
     body = reasoning_body(entry, tokens) or {}
     return body.get("max_tokens", 0) + OUTPUT_HEADROOM
 
 
 def build_model(entry: ModelEntry, reasoning_tokens: int | None) -> LiteLlm:
-    get_settings()  # ensures OPENROUTER_API_KEY is exported for LiteLLM
+    settings = get_settings()  # also exports OPENROUTER_API_KEY for LiteLLM
+    if entry.provider == ollama.PROVIDER:
+        return _local(entry, reasoning_tokens, settings.ollama_url)
     body = reasoning_body(entry, reasoning_tokens)
     extra = {"extra_body": {"reasoning": body}} if body else {}
     return LiteLlm(
@@ -34,4 +42,18 @@ def build_model(entry: ModelEntry, reasoning_tokens: int | None) -> LiteLlm:
         num_retries=1,
         timeout=120,
         **extra,
+    )
+
+
+def _local(entry: ModelEntry, reasoning_tokens: int | None, url: str) -> LiteLlm:
+    """Ollama: JSON mode keeps small models parseable; thinking is a switch, not a budget."""
+    effort = ollama.effort(entry.slug, reasoning_tokens)
+    return LiteLlm(
+        model=f"ollama_chat/{entry.slug}",
+        api_base=url or "http://localhost:11434",
+        max_tokens=max_output(entry, reasoning_tokens),
+        response_format={"type": "json_object"},
+        num_retries=1,
+        timeout=120 * entry.deadline_scale,
+        **({"reasoning_effort": effort} if effort else {}),
     )
