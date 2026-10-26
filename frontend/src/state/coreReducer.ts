@@ -1,6 +1,6 @@
-// Core reducer: players, phase, bubbles, reactions, mind, arcs (stats live in statsReducer).
+// Core reducer: players, phase, bubbles, reactions, mind (stats live in statsReducer).
 import type { GameEvent, SetupPlayer } from '../api/types'
-import { addArcs, addMind, setBubble } from './reducerParts'
+import { addMind, setBubble } from './reducerParts'
 import type { GameView, PlayerView } from './viewTypes'
 
 const FEED_KINDS = new Set([
@@ -28,7 +28,6 @@ export function coreReducer(v: GameView, ev: GameEvent): GameView {
       next.reactions = {}
       next.roundOpen = false
       next.speaker = undefined
-      if (next.phase === 'night' || next.phase === 'discussion') next.arcs = []
       return next
     case 'reaction': {
       if (!v.roundOpen) next.reactions = {}
@@ -57,7 +56,6 @@ export function coreReducer(v: GameView, ev: GameEvent): GameView {
       return addMind(next, ev, 'vote', ev.data.thought ?? ev.text)
     }
     case 'action':
-      addArcs(next, ev)
       return ev.actor && ev.data.thought ? addMind(next, ev, 'action', ev.data.thought) : next
     case 'death':
     case 'reveal':

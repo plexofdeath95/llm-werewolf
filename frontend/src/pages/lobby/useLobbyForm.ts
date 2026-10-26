@@ -16,7 +16,7 @@ export interface LobbySettings {
 }
 
 const DEFAULTS: LobbySettings = {
-  seed: '', narrator: '', quick: 512, deep: 2048, maxCost: 10, rounds: 3,
+  seed: '', narrator: '', quick: 0, deep: 2048, maxCost: 10, rounds: 3,
   fake: false, revealModels: false, revealOnDeath: true,
 }
 

@@ -28,7 +28,9 @@ export function SettingsCard({ form }: { form: LobbyForm }) {
         </label>
         {num('rounds', 'discussion rounds', 1, 'Time limit: each day ends after this many rounds '
           + '(one round = one message per living player). Everyone is heard at least once.')}
-        {num('quick', 'react reasoning cap', 128, 'Max reasoning tokens for quick react calls')}
+        {num('quick', 'reaction reasoning (0 = off, fastest)', 128, 'Hidden reasoning tokens for quick '
+          + 'reaction calls. 0 = off: reactions stay fast and the in-character thought still shows; '
+          + 'votes and night actions keep their own reasoning cap.')}
         {num('deep', 'decision reasoning cap', 256, 'Max reasoning tokens for votes and night actions')}
         {num('maxCost', 'max cost (USD)', 1, 'The game pauses when it has spent this much')}
       </div>

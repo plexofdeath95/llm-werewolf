@@ -1,7 +1,8 @@
-// DOM content of the bubble above a player's head: "thinking…", or what they said / voted.
-// Reasoning never pops up in the scene; click a player to read it in the Mind panel.
+// DOM content of the bubble above a player's head: "thinking…", or what they said.
+// Full text, typed out as it is said. Reasoning never pops up in the scene; click a
+// player to read it in the Mind panel.
+import { useTypewriter } from '../hooks/useTypewriter'
 import { THINKING_EMOJIS } from '../lib/colors'
-import { clip } from '../lib/format'
 import { INTERRUPT_TIP } from '../lib/tips'
 import { useTick } from '../hooks/useTick'
 import type { Bubble } from '../state/viewTypes'
@@ -9,6 +10,7 @@ import type { Bubble } from '../state/viewTypes'
 export interface BubbleCardProps {
   bubble?: Bubble
   thinking: boolean
+  charsPerSecond: number
 }
 
 function Thinking() {
@@ -21,20 +23,24 @@ function Thinking() {
   )
 }
 
-export function BubbleCard({ bubble, thinking }: BubbleCardProps) {
-  if (bubble?.kind === 'vote') {
-    return <div className="bubble vote" key={bubble.seq}>🗳️ {bubble.text}</div>
-  }
-  if (bubble?.kind === 'speech') {
-    return (
-      <div className={`bubble speech${bubble.private ? ' private' : ''}`} key={bubble.seq}>
-        {bubble.interrupt && <span className="interrupt-burst" data-tip={INTERRUPT_TIP}>INTERRUPTS!</span>}
-        {bubble.channel && bubble.channel !== 'public' && (
-          <span className="bubble-channel">{bubble.channel}</span>
-        )}
-        {clip(bubble.text, 180)}
-      </div>
-    )
-  }
+function Speech({ bubble, cps }: { bubble: Bubble; cps: number }) {
+  const typed = useTypewriter(bubble.text, bubble.seq, cps)
+  return (
+    <div className={`bubble speech${bubble.private ? ' private' : ''}`} data-tip={bubble.text}>
+      {bubble.interrupt && <span className="interrupt-burst" data-tip={INTERRUPT_TIP}>INTERRUPTS!</span>}
+      {bubble.channel && bubble.channel !== 'public' && (
+        <span className="bubble-channel">{bubble.channel}</span>
+      )}
+      {/* the full text reserves the bubble's final size, so it doesn't jump while typing */}
+      <span className="typed-wrap">
+        <span className="typed-ghost" aria-hidden>{bubble.text}</span>
+        <span className="typed">{typed}</span>
+      </span>
+    </div>
+  )
+}
+
+export function BubbleCard({ bubble, thinking, charsPerSecond }: BubbleCardProps) {
+  if (bubble?.kind === 'speech') return <Speech key={bubble.seq} bubble={bubble} cps={charsPerSecond} />
   return thinking ? <Thinking /> : null
 }

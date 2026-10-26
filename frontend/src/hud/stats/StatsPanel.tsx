@@ -1,6 +1,7 @@
 // Collapsible game-stats panel so humans can keep track: tabs derived from the reducer state.
 import { useState } from 'react'
 import type { GameView } from '../../state/viewTypes'
+import { CaseBoard } from './CaseBoard'
 import { NightTab } from './NightTab'
 import { OverviewTab } from './OverviewTab'
 import { PlayersTab } from './PlayersTab'
@@ -14,14 +15,14 @@ export interface StatsProps {
   onSelect: (pid: string) => void
 }
 
-const TABS = ['Overview', 'Talk', 'Votes', 'Players', 'Night'] as const
+const TABS = ['Case', 'Overview', 'Talk', 'Votes', 'Players', 'Night'] as const
 type Tab = (typeof TABS)[number]
 
 export function StatsPanel(props: StatsProps) {
   const [open, setOpen] = useState(true)
-  const [tab, setTab] = useState<Tab>('Overview')
+  const [tab, setTab] = useState<Tab>('Case')
   const tabs = TABS.filter((t) => t !== 'Night' || props.god)
-  const active = tabs.includes(tab) ? tab : 'Overview'
+  const active = tabs.includes(tab) ? tab : 'Case'
   return (
     <div className={`panel stats${open ? '' : ' collapsed'}`}>
       <div className="stats-head">
@@ -35,6 +36,7 @@ export function StatsPanel(props: StatsProps) {
       </div>
       {open && (
         <div className="stats-body">
+          {active === 'Case' && <CaseBoard {...props} />}
           {active === 'Overview' && <OverviewTab {...props} />}
           {active === 'Talk' && <TalkTab {...props} />}
           {active === 'Votes' && <VotesTab {...props} />}

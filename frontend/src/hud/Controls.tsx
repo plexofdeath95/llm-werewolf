@@ -8,6 +8,9 @@ export interface ViewToggles {
   follow: boolean
   orbit: boolean
   stats: boolean
+  voices: boolean
+  strip: boolean
+  cinematic: boolean
 }
 
 export interface ControlsProps {
@@ -52,6 +55,9 @@ export function Controls({ queue, server, liveGame, send, toggles, setToggle }: 
         <Toggle on={toggles.follow} label="🎥 follow" onClick={() => setToggle('follow')} title="camera follows the speaker" />
         <Toggle on={toggles.orbit} label="🌀 orbit" onClick={() => setToggle('orbit')} title="free camera" />
         <Toggle on={toggles.stats} label="📊 stats" onClick={() => setToggle('stats')} title="game stats panel" />
+        <Toggle on={toggles.voices} label="🔊 voices" onClick={() => setToggle('voices')} title="read every line aloud, one voice per player" />
+        <Toggle on={toggles.cinematic} label="🎬 cinematic" onClick={() => setToggle('cinematic')} title="hide the side panels during the night walk, dawn and the vote (hover an edge tab to peek)" />
+        <Toggle on={toggles.strip} label="🎚 bids" onClick={() => setToggle('strip')} title="show the live urgency bids of every player" />
       </div>
     </div>
   )

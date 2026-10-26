@@ -1,11 +1,12 @@
-// The 3D game room: tavern, round table, seated avatars, night arcs, camera.
+// The 3D game room: tavern, round table, seated avatars, and their houses for the night walk.
 import { ContactShadows } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { isNight } from '../state/selectors'
+import type { Walk } from '../hooks/useNightWalks'
 import type { GameView } from '../state/viewTypes'
-import { Arcs } from './Arcs'
 import { CameraRig } from './CameraRig'
 import { createRenderer } from './createRenderer'
+import { Houses } from './House'
 import { Lighting } from './Lighting'
 import { Room } from './Room'
 import { Seat } from './Seat'
@@ -17,6 +18,8 @@ export interface GameSceneProps {
   thinking: Set<string>
   follow: boolean
   orbit: boolean
+  charsPerSecond: number // speech bubble typewriter speed
+  walks: Record<string, Walk> // god view night walks in progress
   selected?: string
   onSelect: (pid: string) => void
 }
@@ -32,17 +35,14 @@ export function GameScene(p: GameSceneProps) {
       <Room night={night} />
       <Table night={night} />
       <ContactShadows position={[0, 0.015, 0]} opacity={0.45} scale={14} blur={2.4} far={3} />
-      {view.order.map((pid) => {
-        const player = view.players[pid]
-        return (
-          <Seat key={pid} view={view} player={player} god={p.god}
-            thinking={p.thinking.has(pid)}
-            selected={p.selected === pid} onSelect={p.onSelect} />
-        )
-      })}
-      <Arcs view={view} god={p.god} />
+      <Houses view={view} />
+      {view.order.map((pid) => (
+        <Seat key={pid} view={view} player={view.players[pid]} god={p.god}
+          thinking={p.thinking.has(pid)} selected={p.selected === pid}
+          charsPerSecond={p.charsPerSecond} walk={p.walks[pid]} onSelect={p.onSelect} />
+      ))}
       <CameraRig focusSeat={speaker?.seat} count={view.order.length}
-        follow={p.follow} orbit={p.orbit} night={night} />
+        follow={p.follow} orbit={p.orbit} wide={night || view.phase === 'dawn'} />
     </Canvas>
   )
 }

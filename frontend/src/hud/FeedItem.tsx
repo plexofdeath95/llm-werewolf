@@ -27,7 +27,7 @@ export function FeedItem({ ev, view }: { ev: GameEvent; view: GameView }) {
         {tag}
         {ev.data.interrupt && <span className="int-badge" data-tip={INTERRUPT_TIP}>⚡ interrupts</span>}
         {ev.data.nudged && <span className="int-badge nudge" data-tip={NUDGE_TIP}>👉 called on</span>}
-        <b style={{ color: p?.model?.color }}>{p?.name ?? '?'}</b>
+        <b className="who" style={{ background: p?.model?.color }}>{p?.name ?? '?'}</b>
         <span className="feed-text">{ev.text}</span>
       </div>
     )

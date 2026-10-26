@@ -34,6 +34,15 @@ export function nameOf(v: GameView, pid: string | null | undefined): string {
 
 export const isNight = (phase: string) => phase === 'night'
 
+/** Votes per target in the current vote (private votes only in god view). */
+export function voteTally(v: GameView, god: boolean): Record<string, number> {
+  const tally: Record<string, number> = {}
+  for (const vote of Object.values(v.votes)) {
+    if (vote.target && (god || !vote.private)) tally[vote.target] = (tally[vote.target] ?? 0) + 1
+  }
+  return tally
+}
+
 export interface PhaseMark { index: number; label: string; night: boolean }
 
 /** Seek targets: index into the event list of every PHASE event. */

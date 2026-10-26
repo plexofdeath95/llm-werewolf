@@ -19,16 +19,3 @@ export function addMind(
   v.mind = { ...v.mind, [ev.actor]: [...trimmed, entry] }
   return v
 }
-
-export function addArcs(v: GameView, ev: GameEvent): void {
-  if (!ev.actor || ev.data.action === 'result') return // results are private notes, not moves
-  const targets: string[] = ev.data.targets ?? (ev.target ? [ev.target] : [])
-  const fresh = targets
-    .filter((t) => t && t !== ev.actor && v.players[t])
-    .map((to) => ({
-      seq: ev.seq, from: ev.actor!, to,
-      cls: String(ev.data.cls ?? ''), action: String(ev.data.action ?? ''),
-      private: ev.visible_to !== null,
-    }))
-  if (fresh.length) v.arcs = [...v.arcs, ...fresh]
-}

@@ -1,52 +1,17 @@
 // The derived, render-ready view of a game at some point in its event stream.
 import type { GameEvent, ModeInfo, SetupPlayer } from '../api/types'
+import { emptyInsight, type InsightView } from './insightTypes'
+import type { Bubble, MindEntry, ReactionView } from './sceneTypes'
 import type { PlayerStats, TimelineMark, VoteView } from './statsTypes'
 
+export type { Bubble, MindEntry, ReactionView } from './sceneTypes'
+export type { Banner, Emote, InsightView } from './insightTypes'
 export type { PlayerStats, TimelineMark, VoteView }
 
 export interface PlayerView extends SetupPlayer {
   revealedRole?: string
   deathCause?: string
   diedRound?: number
-}
-
-export interface Bubble {
-  kind: 'thought' | 'speech' | 'vote'
-  text: string
-  seq: number
-  urgency?: number
-  interrupt?: boolean
-  channel?: string
-  private: boolean
-}
-
-export interface ReactionView {
-  urgency: number
-  thought: string
-  message: string
-  seq: number
-  channel?: string
-}
-
-export interface MindEntry {
-  seq: number
-  round: number
-  phase: string
-  kind: 'reaction' | 'thought' | 'vote' | 'speech' | 'action'
-  text: string
-  urgency?: number
-  cost?: number
-  latency?: number
-  schema?: string
-}
-
-export interface Arc {
-  seq: number
-  from: string
-  to: string
-  cls: string
-  action: string
-  private: boolean
 }
 
 export interface GameView {
@@ -63,7 +28,6 @@ export interface GameView {
   speaker?: string
   interruptSeq?: number
   mind: Record<string, MindEntry[]>
-  arcs: Arc[]
   spent: number
   paused: boolean
   winner?: string
@@ -75,6 +39,8 @@ export interface GameView {
   voteResult?: { counts: Record<string, number>; eliminated: string | null; seq: number }
   nightLog: GameEvent[]
   stats: Record<string, PlayerStats>
+  // at-a-glance slices (insightReducer)
+  insight: InsightView
 }
 
 export const emptyView: GameView = {
@@ -88,7 +54,6 @@ export const emptyView: GameView = {
   reactions: {},
   roundOpen: false,
   mind: {},
-  arcs: [],
   spent: 0,
   paused: false,
   lastSeq: 0,
@@ -97,4 +62,5 @@ export const emptyView: GameView = {
   votes: {},
   nightLog: [],
   stats: {},
+  insight: emptyInsight,
 }

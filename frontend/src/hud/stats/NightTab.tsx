@@ -1,26 +1,26 @@
-// God view: last night's ACTION events in resolution order.
-import { classColor } from '../../lib/colors'
-import { titleCase } from '../../lib/format'
+// God view: last night's actions in resolution order, as plain sentences, plus what each
+// player privately learned at dawn.
+import { actSentence, nightActs } from '../../lib/nightText'
 import { PlayerName } from './PlayerName'
 import type { StatsProps } from './StatsPanel'
 
 export function NightTab({ view, onSelect }: StatsProps) {
-  if (!view.nightLog.length) return <div className="muted">No night actions yet.</div>
+  const acts = nightActs(view)
+  const notes = view.nightLog.filter((e) => e.data.action === 'result')
+  if (!acts.length && !notes.length) return <div className="muted">No night actions yet.</div>
   return (
-    <ol className="night-log">
-      {view.nightLog.map((ev) => {
-        const targets: string[] = ev.data.targets ?? (ev.target ? [ev.target] : [])
-        const result = ev.data.action === 'result'
-        return (
-          <li key={ev.seq} className={result ? 'result' : ''}>
-            <span className="cls-dot" style={{ background: classColor(ev.data.cls) }} />
-            {ev.actor && <PlayerName view={view} pid={ev.actor} onSelect={onSelect} />}{' '}
-            <b>{result ? '📜 learns' : titleCase(String(ev.data.action ?? 'acts'))}</b>
-            {!result && targets.map((t) => <PlayerName key={t} view={view} pid={t} onSelect={onSelect} />)}
-            <div className="muted small">{ev.text}</div>
+    <div>
+      <ol className="night-log">
+        {acts.map((ev) => <li key={ev.seq} data-tip={ev.text || undefined}>{actSentence(view, ev)}</li>)}
+      </ol>
+      {notes.length > 0 && <div className="stat-label">Private results at dawn</div>}
+      <ul className="night-log">
+        {notes.map((ev) => (
+          <li key={ev.seq} className="result">
+            {ev.actor && <PlayerName view={view} pid={ev.actor} onSelect={onSelect} />} {ev.text}
           </li>
-        )
-      })}
-    </ol>
+        ))}
+      </ul>
+    </div>
   )
 }
