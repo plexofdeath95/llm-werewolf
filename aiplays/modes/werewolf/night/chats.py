@@ -18,9 +18,11 @@ def channels(mod: Moderator) -> dict[str, list[Player]]:
 
 async def night_chats(mod: Moderator) -> None:
     for ch, members in channels(mod).items():
-        if len(members) < 2:
-            continue
         ids = [m.id for m in members]
+        if len(members) < 2:  # say so, or a solo den looks like a skipped phase
+            await mod.announce(f"[{ch}] {members[0].name} is alone tonight: nobody to plot with.",
+                               visible_to=ids, channel=ch)
+            continue
         await mod.announce(f"[{ch}] {mod.state.names(members)}: you may talk privately now.",
                            visible_to=ids, channel=ch)
         n = len(members)
