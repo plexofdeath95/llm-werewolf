@@ -7,11 +7,11 @@ export function Hat({ variant, color }: { variant: number; color?: string }) {
   const c = color ?? HAT_COLORS[variant % HAT_COLORS.length]
   const mat = <meshStandardMaterial color={c} flatShading />
   switch (variant % HAT_COUNT) {
-    case 0: // wizard
+    case 0: // wizard: the brim rests on the crown of the head and the cone rises from it
       return (
-        <group position={[0, 0.28, 0]} rotation={[0.15, 0, 0.1]}>
-          <mesh castShadow><coneGeometry args={[0.3, 0.7, 10]} />{mat}</mesh>
-          <mesh position={[0, -0.32, 0]}><cylinderGeometry args={[0.42, 0.42, 0.04, 16]} />{mat}</mesh>
+        <group position={[0, 0.2, 0]} rotation={[0.12, 0, 0.12]}>
+          <mesh position={[0, 0.02, 0]}><cylinderGeometry args={[0.44, 0.44, 0.04, 16]} />{mat}</mesh>
+          <mesh castShadow position={[0, 0.36, 0]}><coneGeometry args={[0.27, 0.68, 10]} />{mat}</mesh>
         </group>
       )
     case 1: // top hat
