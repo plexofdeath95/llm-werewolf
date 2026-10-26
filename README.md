@@ -17,6 +17,28 @@ Each round goes:
 
 This repeats until the village or the wolves win. The rules are run by code, not by an LLM, and every player gets the full rules for every role in the game.
 
+**The game loop:**
+
+```mermaid
+flowchart TD
+  Deal(["Deal secret roles"]) --> Night["Night<br/>wolf chat, then every ability at once"]
+  Night --> Dawn["Dawn<br/>deaths announced, private results"]
+  Dawn --> Won1{"Someone won?"}
+  Won1 -- no --> React
+  subgraph Day["Day discussion"]
+    React["Everyone reacts in private<br/>thought, urgency, suspect, draft"] --> Speak["Most urgent draft is spoken"]
+    Speak --> More{"Rounds left?"}
+    More -- yes --> React
+  end
+  More -- no --> Vote["Vote<br/>most votes is out, card shown, last words"]
+  Vote --> Won2{"Someone won?"}
+  Won2 -- no --> Night
+  Won1 -- yes --> Over(["Game over"])
+  Won2 -- yes --> Over
+```
+
+**The pieces:**
+
 ```mermaid
 flowchart LR
   UI["Browser<br/>React + three.js"] <-->|live events| API["FastAPI"]
