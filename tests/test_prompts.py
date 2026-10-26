@@ -2,12 +2,12 @@
 import re
 
 import pytest
+from rolekit import game
 
 from aiplays.agents.prompts import render
 from aiplays.modes.werewolf import rules
 from aiplays.modes.werewolf.night import options
 from aiplays.modes.werewolf.roles import ROLES
-from rolekit import game
 
 PLACEHOLDER = re.compile(r"\$[a-z_]+")
 PLAYABLE = sorted(r for r in ROLES if not r.startswith("zz"))

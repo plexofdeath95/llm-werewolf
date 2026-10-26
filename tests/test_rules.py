@@ -1,10 +1,11 @@
 """Deck building and win conditions."""
 import random
 
+from rolekit import game
+
 from aiplays.modes.werewolf.deck import default_deck, sizes
 from aiplays.modes.werewolf.roles import ROLES
 from aiplays.modes.werewolf.win import winner
-from rolekit import game
 
 
 def test_faction_sizes():

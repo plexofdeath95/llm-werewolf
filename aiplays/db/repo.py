@@ -11,7 +11,6 @@ from aiplays.db import migrate
 from aiplays.db.tables import EventRow, GameRow, PlayerRow
 from aiplays.settings import get_catalog
 
-
 ORPHAN_AFTER_S = 15 * 60
 
 

@@ -15,7 +15,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from video_tools import OUT, LoopbackRecorder, ffmpeg  # noqa: E402
+from video_tools import OUT, LoopbackRecorder, ffmpeg
 
 UI, API = "http://localhost:5173", "http://127.0.0.1:8000"
 

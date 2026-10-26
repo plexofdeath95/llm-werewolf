@@ -12,8 +12,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from aiplays.core.hub import get_hub  # noqa: E402
-from aiplays.db.share import check, import_game, read  # noqa: E402
+from aiplays.core.hub import get_hub
+from aiplays.db.share import check, import_game, read
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -33,7 +33,7 @@ async def main(args: argparse.Namespace) -> int:
             else:
                 skipped += 0 if args.check else 1
             print(f"ok   {path.name}: {gid}, {doc['game']['status']}, {len(doc['events'])} events")
-        except Exception as e:  # report every broken file, not just the first
+        except Exception as e:  # noqa: BLE001 - report every broken file, not just the first
             bad += 1
             print(f"FAIL {path.name}: {e}")
     print(f"{len(files)} file(s): {added} imported, {skipped} already here, {bad} invalid")

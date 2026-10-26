@@ -8,8 +8,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from aiplays.core.hub import get_hub  # noqa: E402
-from aiplays.db.stats import report  # noqa: E402
+from aiplays.core.hub import get_hub
+from aiplays.db.stats import report
 
 
 def show(title: str, cols: list[str], rows: list[list]) -> None:

@@ -4,9 +4,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from aiplays.modes.werewolf.roles.base import Handler
-
 from aiplays.modes.werewolf.roles.effects_info import (  # noqa: F401  (re-exported)
-    follow, inspect_role, inspect_team, lineup, watch_home)
+    follow,
+    inspect_role,
+    inspect_team,
+    lineup,
+    watch_home,
+)
 
 if TYPE_CHECKING:  # runtime import would be circular (context -> roles -> effects)
     from aiplays.modes.werewolf.night.context import Act, Night

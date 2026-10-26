@@ -1,6 +1,8 @@
 """React rounds close without the slowest model; its late bid joins a later round."""
 import asyncio
 
+from rolekit import game
+
 from aiplays.agents.base import Reply
 from aiplays.agents.schemas import Reaction
 from aiplays.core.bus import EventBus
@@ -9,7 +11,6 @@ from aiplays.core.gate import Budget, Gate
 from aiplays.core.mode import get_mode
 from aiplays.core.moderator import Moderator
 from aiplays.core.react import Reactions
-from rolekit import game
 
 
 class Timed:

@@ -1,6 +1,8 @@
 """Discussion: everyone is heard at least once, quiet voices are called on, time limit holds."""
 import random
 
+from rolekit import game
+
 from aiplays.agents.base import Reply
 from aiplays.agents.schemas import Reaction, Speech
 from aiplays.core.bus import EventBus
@@ -10,7 +12,6 @@ from aiplays.core.events import Kind
 from aiplays.core.gate import Budget, Gate
 from aiplays.core.mode import get_mode
 from aiplays.core.moderator import Moderator
-from rolekit import game
 
 
 class Scripted:

@@ -15,11 +15,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from aiplays.core.config import GameConfig, SeatConfig  # noqa: E402
-from aiplays.core.hub import get_hub  # noqa: E402
-from aiplays.core.mode import get_mode  # noqa: E402
-from aiplays.settings import get_catalog, get_settings  # noqa: E402
-
+from aiplays.core.config import GameConfig, SeatConfig
+from aiplays.core.hub import get_hub
+from aiplays.core.mode import get_mode
+from aiplays.settings import get_catalog, get_settings
 
 RESERVE = 3.0  # rough cost of one 8-player game, held back for every game still running
 

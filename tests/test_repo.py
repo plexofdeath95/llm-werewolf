@@ -1,6 +1,7 @@
 """Startup cleanup cancels only games that went silent, never another process's live game."""
 import time
 
+from rolekit import game
 from sqlalchemy import update
 
 from aiplays.core.config import GameConfig, SeatConfig
@@ -8,7 +9,6 @@ from aiplays.core.events import GameEvent, Kind
 from aiplays.db import repo as repo_mod
 from aiplays.db.repo import Repo
 from aiplays.db.tables import EventRow, GameRow
-from rolekit import game
 
 
 async def _game(repo: Repo, gid: str, last_event_age_s: float) -> None:

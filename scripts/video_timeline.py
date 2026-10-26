@@ -12,7 +12,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from video_tools import OUT, ROOT, ffmpeg  # noqa: E402
+from video_tools import OUT, ROOT, ffmpeg
 
 BAR_Y, BAR_X0, FPS, W = 1000, 70, 2, 1920  # 1920x1080 layout: replay bar row and its start
 

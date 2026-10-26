@@ -1,11 +1,11 @@
 """Shared game files round-trip: export from one DB, import into another, nothing lost."""
 import pytest
+from rolekit import game
 
 from aiplays.core.config import GameConfig, SeatConfig
 from aiplays.core.events import GameEvent, Kind
 from aiplays.db.repo import Repo
 from aiplays.db.share import check, export_game, import_game, read, write
-from rolekit import game
 
 
 async def _repo(tmp_path, name: str) -> Repo:

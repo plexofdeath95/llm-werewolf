@@ -14,9 +14,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from highlight_moments import load, moments  # noqa: E402
-from highlight_plan import FAST, GAP_MAX, SPEED, plan  # noqa: E402
-from video_tools import OUT, ffmpeg  # noqa: E402
+from highlight_moments import load, moments
+from highlight_plan import FAST, GAP_MAX, SPEED, plan
+from video_tools import OUT, ffmpeg
 
 FONT = "C\\:/Windows/Fonts/arialbd.ttf"
 FADE = 0.06

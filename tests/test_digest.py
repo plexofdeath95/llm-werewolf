@@ -1,7 +1,8 @@
 """The digest tells a player which of their react-round drafts were never heard."""
+from rolekit import game
+
 from aiplays.agents import digest
 from aiplays.core.events import GameEvent, Kind
-from rolekit import game
 
 
 def _events():

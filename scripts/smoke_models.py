@@ -8,12 +8,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from google.adk.sessions import InMemorySessionService  # noqa: E402
+from google.adk.sessions import InMemorySessionService
 
-from aiplays.agents.player_agent import PlayerAgent  # noqa: E402
-from aiplays.agents.pricing import load_prices  # noqa: E402
-from aiplays.agents.schemas import Reaction  # noqa: E402
-from aiplays.settings import get_catalog, get_settings  # noqa: E402
+from aiplays.agents.player_agent import PlayerAgent
+from aiplays.agents.pricing import load_prices
+from aiplays.agents.schemas import Reaction
+from aiplays.settings import get_catalog, get_settings
 
 PROMPT = ('Day 1 discussion. Bob says: "Alice has been weirdly quiet, and quiet players are '
           'usually wolves." React.')

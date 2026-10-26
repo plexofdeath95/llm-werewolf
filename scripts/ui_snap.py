@@ -7,7 +7,6 @@ Usage: uv run python scripts/ui_snap.py [--game ID] [--shots 6] [--every 4] [--c
 import argparse
 import json
 import statistics
-import time
 import urllib.request
 from pathlib import Path
 
@@ -62,7 +61,7 @@ def main(a: argparse.Namespace) -> None:
                 page.wait_for_timeout(800)
                 print("click ok; mind panel mentions name:",
                       a.click in (page.locator(".mind").first.inner_text(timeout=2000)))
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 - a dev probe: report the failure and carry on
                 print("CLICK FAILED:", str(e).splitlines()[0])
             page.screenshot(path=OUT / "after_click.png")
             page.wait_for_timeout(400)

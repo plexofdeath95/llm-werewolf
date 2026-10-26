@@ -45,7 +45,16 @@ Played some games? See [community/README.md](community/README.md) for how to exp
 
 ## Before you open a pull request
 
-- `uv run pytest` passes.
+- `uv run ruff check .` and `uv run pytest` pass.
 - `cd frontend && npm run build` passes if you touched the frontend.
 - Nothing from `.env`, `data/` or your music folder is committed.
 - New game files pass `uv run python scripts/import_games.py --check`.
+
+## How pull requests are merged
+
+`main` is protected. Every change arrives as a pull request from a branch or fork, and it can merge when:
+- both CI checks pass (**Python tests** and **Frontend build**, run by GitHub Actions on every pull request);
+- the maintainer has approved it (reviews are requested automatically through `.github/CODEOWNERS`);
+- every review conversation is resolved.
+
+A new push dismisses an earlier approval. Force-pushing to `main` and deleting it are blocked.

@@ -1,7 +1,7 @@
 """The Agent protocol every player implementation (ADK, fake, future human) satisfies."""
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Generic, Protocol, TypeVar
+from typing import Any, Protocol, TypeVar
 
 from pydantic import BaseModel
 
@@ -12,7 +12,7 @@ Delta = Callable[[str, str | None], None]
 
 
 @dataclass
-class Reply(Generic[T]):
+class Reply[T: BaseModel]:
     value: T | None
     thoughts: str = ""
     raw: str = ""

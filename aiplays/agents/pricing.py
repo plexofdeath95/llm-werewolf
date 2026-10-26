@@ -16,7 +16,7 @@ async def load_prices() -> dict[str, tuple[float, float, float]]:
             async with httpx.AsyncClient(timeout=20) as client:
                 data = (await client.get(_URL)).json()["data"]
             _prices = {m["id"]: _triple(m.get("pricing", {})) for m in data}
-        except Exception as e:  # pricing is best-effort; never block a game on it
+        except Exception as e:  # noqa: BLE001 - pricing is best-effort; never block a game on it
             log.warning("could not load OpenRouter prices: %s", e)
             _prices = {}
     return _prices
