@@ -30,3 +30,15 @@ def test_shared_and_mode_templates_render(template):
     text = render(template, rules.PROMPTS, round=2, channel="public", count=3, max=24,
                   options="Ann, Ben")
     assert text and not PLACEHOLDER.search(text), PLACEHOLDER.findall(text)
+
+
+@pytest.mark.parametrize("style_id", ["caveman", "pirate", "noir", "shakespeare"])
+def test_speech_styles_render(style_id):
+    from aiplays.agents.factory import _style_text
+    text = render("speech_style", style=_style_text(style_id))
+    assert "SPEECH STYLE" in text and len(text) > 120 and not PLACEHOLDER.search(text)
+
+
+def test_unknown_style_adds_nothing():
+    from aiplays.agents.factory import _style_text
+    assert _style_text(None) == "" and _style_text("klingon") == ""

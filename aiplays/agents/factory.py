@@ -12,7 +12,7 @@ from aiplays.agents.prompts import render
 from aiplays.core.config import GameConfig
 from aiplays.core.mode import GameMode
 from aiplays.core.state import GameState
-from aiplays.settings import get_catalog, get_settings
+from aiplays.settings import get_catalog, get_settings, get_speech_styles
 
 
 @lru_cache
@@ -34,12 +34,18 @@ def build_agents(state: GameState, mode: GameMode, cfg: GameConfig) -> dict[str,
         instruction = mode.briefing(state, p, cfg.reveal_models)
         if p.persona:
             instruction += "\n\n" + render("persona", persona=p.persona)
+        if style := _style_text(cfg.speech_style):
+            instruction += "\n\n" + render("speech_style", style=style)
         agents[p.id] = PlayerAgent(
             agent_name=f"seat_{p.seat}", entry=catalog.get(p.model_id), instruction=instruction,
             app_name=mode.id, user_id=state.game_id, session_id=p.id,
             quick=cfg.quick_reasoning, deep=cfg.deep_reasoning,
             sem=_semaphore(), session_service=session_service())
     return agents
+
+
+def _style_text(style_id: str | None) -> str:
+    return next((s["text"] for s in get_speech_styles() if s["id"] == style_id), "")
 
 
 def build_narrator(state: GameState, cfg: GameConfig) -> Agent | None:

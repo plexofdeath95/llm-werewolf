@@ -72,6 +72,12 @@ def get_catalog() -> Catalog:
 
 
 @lru_cache
+def get_speech_styles() -> list[dict]:
+    path = ROOT / "config" / "speech_styles.yaml"
+    return yaml.safe_load(path.read_text(encoding="utf-8")).get("speech_styles", [])
+
+
+@lru_cache
 def get_personas() -> list[dict]:
     path = ROOT / "config" / "personas.yaml"
     return yaml.safe_load(path.read_text(encoding="utf-8")).get("personas", [])

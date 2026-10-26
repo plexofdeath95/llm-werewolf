@@ -1,0 +1,25 @@
+# How players talk OUT LOUD (messages, vote reasons, last words). Thoughts stay normal.
+# Picked in the lobby; "normal" (no style) is best for benchmarks.
+speech_styles:
+  - id: caveman
+    label: 🦴 Cave-man speak
+    text: >-
+      Everything you say out loud must be cave-man speak: very short, very simple words,
+      no proper grammar, no articles, call yourself "me". For example: "Me think Bob wolf.
+      Bob lie about night!" or "Carol good. Carol seer. Trust Carol." Keep your meaning sharp:
+      still accuse, defend, claim and bluff, just in cave-man words.
+  - id: pirate
+    label: 🏴‍☠️ Pirate
+    text: >-
+      Everything you say out loud must sound like a salty pirate: "Arr", "matey", "ye",
+      "scallywag", short and punchy.
+  - id: noir
+    label: 🕵️ Film noir
+    text: >-
+      Everything you say out loud must sound like a 1940s hard-boiled detective: clipped,
+      world-weary, a little dramatic.
+  - id: shakespeare
+    label: 🎭 Shakespearean
+    text: >-
+      Everything you say out loud must sound Shakespearean: thee, thou, doth, dramatic
+      flourishes, but still short.

@@ -59,3 +59,11 @@ def test_resolve_role_from_free_text():
     assert mode.resolve_role("the Alignment Seer") == "alignment_seer"
     assert mode.resolve_role("jack of all trades") == "jack_of_all_trades"
     assert mode.resolve_role("") == "" and mode.resolve_role("pirate") == ""
+
+
+def test_mixed_decks_are_balanced():
+    from aiplays.modes.werewolf.deck import TARGET_BALANCE, balance
+    for n in range(6, 13):
+        for seed in range(5):
+            b = balance(default_deck(n, random.Random(seed)))
+            assert TARGET_BALANCE - 2 <= b <= TARGET_BALANCE + 4, (n, seed, b)

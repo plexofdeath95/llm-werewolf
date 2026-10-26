@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException
 
 from aiplays.core.mode import get_mode, list_modes
-from aiplays.settings import get_catalog, get_personas
+from aiplays.settings import get_catalog, get_personas, get_speech_styles
 
 router = APIRouter(prefix="/api")
 
@@ -11,7 +11,8 @@ router = APIRouter(prefix="/api")
 def models() -> dict:
     cat = get_catalog()
     return {"models": [m.model_dump() for m in cat.models],
-            "default_players": cat.default_players, "personas": get_personas()}
+            "default_players": cat.default_players, "personas": get_personas(),
+            "speech_styles": get_speech_styles()}
 
 
 @router.get("/roster")

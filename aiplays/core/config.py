@@ -34,6 +34,7 @@ class GameConfig(BaseModel):
     quick_reasoning: int = 0      # reaction calls: 0 = no hidden reasoning (fast); N = token cap
     deep_reasoning: int = 2048    # cap for votes, night actions, last words
     narrator_model: str | None = None
+    speech_style: str | None = None  # id from config/speech_styles.yaml (None = normal)
     reveal_on_death: bool = True
     reveal_models: bool = False   # do players know which model the others are?
     fake: bool = False            # offline scripted agents (tests / UI demo)
