@@ -1,4 +1,5 @@
 // Game settings: seed, narrator, reasoning caps, cost cap, demo mode, reveal toggles.
+import { speechStyles } from '../../lib/speechStyles'
 import type { LobbyForm, LobbySettings } from './useLobbyForm'
 
 export function SettingsCard({ form }: { form: LobbyForm }) {
@@ -24,6 +25,13 @@ export function SettingsCard({ form }: { form: LobbyForm }) {
           <select value={s.narrator} onChange={(e) => set('narrator', e.target.value)}>
             <option value="">— none —</option>
             {catalog?.models.filter((m) => m.enabled).map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
+          </select>
+        </label>
+        <label title="How every player talks (rules and strategy stay the same)">
+          speech style
+          <select value={s.speechStyle} onChange={(e) => set('speechStyle', e.target.value)}>
+            <option value="normal">normal</option>
+            {speechStyles(catalog?.speech_styles).map((st) => <option key={st.id} value={st.id}>{st.label}</option>)}
           </select>
         </label>
         {num('rounds', 'discussion rounds', 1, 'Time limit: each day ends after this many rounds '

@@ -1,6 +1,8 @@
 // Pacing: reveals events one at a time with human-friendly delays.
 // Used for BOTH live (follows the growing stream, fast-forwards backlogs) and replay.
 // `hold(promise)` pauses the reveal until the promise settles (e.g. a line being spoken).
+// With voices on, speeches are never fast-forwarded: catching up only collapses the
+// bookkeeping (thoughts, reactions...), so every line is still typed and heard in order.
 import { useCallback, useEffect, useState } from 'react'
 import type { GameEvent } from '../api/types'
 
@@ -35,7 +37,9 @@ export function useEventQueue(events: GameEvent[], live: boolean, voiced = false
 
   useEffect(() => {
     if (!playing || holds > 0 || cursor >= events.length) return
-    const delay = fastForward ? 12 : eventDelay(events[cursor], voiced) / speed
+    const ev = events[cursor]
+    const keep = voiced && ev.kind === 'speech'
+    const delay = fastForward && !keep ? 12 : eventDelay(ev, voiced) / (keep ? Math.min(speed, 2) : speed)
     const t = setTimeout(() => setCursor((c) => Math.min(c + 1, events.length)), delay)
     return () => clearTimeout(t)
   }, [cursor, events, playing, speed, fastForward, voiced, holds])

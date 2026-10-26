@@ -16,6 +16,7 @@ export interface GameConfig {
   fake: boolean
   fake_delay: number
   talk?: { rounds: number }
+  speech_style?: string | null // null = normal speech
 }
 
 export interface GameRow {

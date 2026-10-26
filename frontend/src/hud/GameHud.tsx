@@ -33,6 +33,7 @@ export interface GameHudProps {
   onSelect: (pid: string) => void
   walkCaption?: string // night walk in progress (god view)
   cinematic: boolean // side panels slide away so the room is visible
+  speechStyle?: string // chip under the phase title, e.g. '🦴 cave-man speak'
 }
 
 export function GameHud(p: GameHudProps) {
@@ -52,7 +53,7 @@ export function GameHud(p: GameHudProps) {
         </>
       )}
       <div className="hud-top">
-        <PhaseBanner view={view} />
+        <PhaseBanner view={view} style={p.speechStyle} />
         <Caption view={view} god={toggles.god} walk={p.walkCaption} />
       </div>
       <NightRecap view={view} god={toggles.god} />

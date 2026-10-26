@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import type { GameConfig, ModeInfo, ModelsResponse, SeatConfig } from '../../api/types'
+import { DEFAULT_STYLE } from '../../lib/speechStyles'
 
 export interface LobbySettings {
   seed: string
@@ -10,13 +11,14 @@ export interface LobbySettings {
   deep: number
   maxCost: number
   rounds: number
+  speechStyle: string // 'normal' or a style id
   fake: boolean
   revealModels: boolean
   revealOnDeath: boolean
 }
 
 const DEFAULTS: LobbySettings = {
-  seed: '', narrator: '', quick: 0, deep: 2048, maxCost: 10, rounds: 3,
+  seed: '', narrator: '', quick: 0, deep: 2048, maxCost: 10, rounds: 3, speechStyle: DEFAULT_STYLE,
   fake: false, revealModels: false, revealOnDeath: true,
 }
 
@@ -68,6 +70,7 @@ export function useLobbyForm() {
     fake: settings.fake,
     fake_delay: 0.8,
     talk: { rounds: settings.rounds },
+    speech_style: settings.speechStyle === 'normal' ? null : settings.speechStyle,
   })
 
   const modeInfo = modes.find((m) => m.id === mode)

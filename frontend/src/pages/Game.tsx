@@ -1,12 +1,15 @@
 // Game view (live or replay): socket -> pacing queue -> reducer -> 3D scene + HUD.
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { api } from '../api/client'
 import { useEventQueue } from '../hooks/useEventQueue'
+import { useFetch } from '../hooks/useFetch'
 import { useGameSocket } from '../hooks/useGameSocket'
 import { useGameView, usePendingThinkers } from '../hooks/useGameView'
 import { useNightWalks } from '../hooks/useNightWalks'
 import { moodFor, useMusic } from '../hooks/useMusic'
 import { useSpeechSync } from '../hooks/useSpeechSync'
+import { styleChip } from '../lib/speechStyles'
 import { charsPerSecond } from '../lib/voices'
 import type { ViewToggles } from '../hud/Controls'
 import { GameHud } from '../hud/GameHud'
@@ -30,6 +33,8 @@ export function GamePage() {
   const view = useGameView(sock.events, queue.cursor)
   useSpeechSync(sock.events, queue, view, toggles.voices, toggles.god)
   const night = useNightWalks(sock.events, queue, view, toggles.god)
+  const detail = useFetch(() => Promise.all([api.game(id), api.models()]), [id])
+  const style = styleChip(detail.data?.[0].config.speech_style, detail.data?.[1].speech_styles)
   const pending = usePendingThinkers(sock.events, queue.cursor)
   const nearEdge = sock.events.length - queue.cursor < LIVE_EDGE
   const live = liveGame && nearEdge ? sock.live : NO_LIVE
@@ -58,7 +63,7 @@ export function GamePage() {
       <GameHud view={view} events={sock.events} queue={queue} server={sock.server}
         liveGame={liveGame} send={sock.send} toggles={toggles} setToggle={setToggle}
         thinking={thinking} selected={selected || undefined} onSelect={setSelected}
-        walkCaption={night.caption}
+        walkCaption={night.caption} speechStyle={style}
         cinematic={toggles.cinematic && (CINEMATIC_PHASES.has(view.phase) || !!night.caption)} />
       <Link to="/" className="back-btn" title="back to lobby">⟵ Lobby</Link>
       {!sock.connected && !sock.ended && <div className="conn-flag">connecting to game {id}…</div>}

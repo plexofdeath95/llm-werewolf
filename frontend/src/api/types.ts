@@ -32,11 +32,13 @@ export interface ModelEntry {
 }
 
 export interface Persona { id: string; label: string; text: string }
+export interface SpeechStyle { id: string; label: string; text: string }
 
 export interface ModelsResponse {
   models: ModelEntry[]
   default_players: number
   personas: Persona[]
+  speech_styles?: SpeechStyle[]
 }
 
 export type Team = 'village' | 'wolves' | 'neutral'

@@ -132,3 +132,6 @@
 .bubble.thinking::before, .bubble.thinking::after { display: none; }
 .bubble.thinking .think-emoji { font-size: 15px; }
 .bubble.thinking .dots i { width: 4px; height: 4px; }
+
+/* Speech style chip under the phase title. */
+.style-chip { margin-left: 8px; padding: 0 7px; border-radius: 999px; background: rgba(232, 176, 74, 0.18); color: var(--gold); font-weight: 800; }

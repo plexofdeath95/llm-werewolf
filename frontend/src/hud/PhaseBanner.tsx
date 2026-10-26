@@ -2,7 +2,7 @@
 import { isNight } from '../state/selectors'
 import type { GameView } from '../state/viewTypes'
 
-export function PhaseBanner({ view }: { view: GameView }) {
+export function PhaseBanner({ view, style }: { view: GameView; style?: string }) {
   const night = isNight(view.phase)
   const alive = view.order.filter((id) => view.players[id]?.alive).length
   return (
@@ -11,7 +11,10 @@ export function PhaseBanner({ view }: { view: GameView }) {
         {view.winner ? '🏆' : night ? '🌙' : '☀️'} {view.phaseLabel}
       </div>
       {view.order.length > 0 && (
-        <div className="phase-sub">{alive} of {view.order.length} alive · {view.mode?.name ?? ''}</div>
+        <div className="phase-sub">
+          {alive} of {view.order.length} alive · {view.mode?.name ?? ''}
+          {style && <span className="style-chip" title="How everyone talks in this game">{style}</span>}
+        </div>
       )}
     </div>
   )
